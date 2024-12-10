@@ -18,22 +18,12 @@ class MemoryScramblerImpl: MemoryScrambler {
     ///   - key: The key used for scrambling.
     /// - Returns: The scrambled data.
     func scramble(data: Data, withKey key: Data) -> Data {
-        var scrambledData = data
-
-        // Apply XOR Scrambling
-        scrambledData = applyXORScrambling(to: scrambledData, withKey: key)
-
-        // Apply Byte Shift Scrambling
+        var scrambledData = applyXORScrambling(to: data, withKey: key)
         scrambledData = applyByteShiftScrambling(to: scrambledData, by: 3)
-
-        // Apply AES Scrambling
         if let aesScrambled = applyAESScrambling(to: scrambledData, withKey: key) {
             scrambledData = aesScrambled
         }
-
-        // Apply Multi-threaded XOR Scrambling
         scrambledData = applyMultiThreadedXORScrambling(to: scrambledData, withKey: key)
-
         return scrambledData
     }
 
@@ -44,22 +34,14 @@ class MemoryScramblerImpl: MemoryScrambler {
     ///   - key: The key used for descrambling.
     /// - Returns: The descrambled data.
     func descramble(data: Data, withKey key: Data) -> Data {
-        var descrambledData = data
+        var descrambledData = applyMultiThreadedXORScrambling(to: data, withKey: key)
 
-        // Reverse Multi-threaded XOR Descrambling
-        descrambledData = reverseMultiThreadedXORDescrambling(from: descrambledData, withKey: key)
-
-        // Reverse AES Scrambling
         if let aesDescrambled = reverseAESScrambling(from: descrambledData, withKey: key) {
             descrambledData = aesDescrambled
         }
 
-        // Reverse Byte Shift
         descrambledData = applyByteShiftScrambling(to: descrambledData, by: -3)
-
-        // Reverse XOR Descrambling
         descrambledData = applyXORScrambling(to: descrambledData, withKey: key)
-
         return descrambledData
     }
 
@@ -71,7 +53,7 @@ class MemoryScramblerImpl: MemoryScrambler {
         
         do {
             let sealedBox = try AES.GCM.seal(data, using: aesKey)
-            return sealedBox.combined // Returning combined ciphertext and authentication tag
+            return sealedBox.combined
         } catch {
             return nil
         }
@@ -108,11 +90,8 @@ class MemoryScramblerImpl: MemoryScrambler {
     func applyByteShiftScrambling(to data: Data, by shiftAmount: Int) -> Data {
         var scrambledData = [UInt8](repeating: 0, count: data.count)
         
-        // Shift each byte by the specified amount and handle overflows
         for i in 0..<data.count {
             let shiftedValue = (Int(data[i]) + shiftAmount) % 256
-            
-            // Ensure non-negative results by adjusting modulo for negative shifts
             scrambledData[i] = shiftedValue >= 0 ? UInt8(shiftedValue) : UInt8(shiftedValue + 256)
         }
         
@@ -126,15 +105,14 @@ class MemoryScramblerImpl: MemoryScrambler {
         let queue = DispatchQueue(label: "com.memoryscrambler.concurrent", attributes: .concurrent)
         let group = DispatchGroup()
         
-        let chunkCount = 8 // Number of chunks to split the data into for parallel processing
-        let chunkSize = (data.count + chunkCount - 1) / chunkCount // Ensure all bytes are covered
+        let chunkCount = 8
+        let chunkSize = (data.count + chunkCount - 1) / chunkCount
         
         for chunkIndex in 0..<chunkCount {
             queue.async(group: group) {
                 let startIndex = chunkIndex * chunkSize
                 let endIndex = min((chunkIndex + 1) * chunkSize, data.count)
                 
-                // Ensure valid range for the last chunk
                 guard startIndex < endIndex else { return }
                 
                 for i in startIndex..<endIndex {
@@ -144,12 +122,8 @@ class MemoryScramblerImpl: MemoryScrambler {
             }
         }
         
-        group.wait() // Wait for all chunks to finish
+        group.wait()
         return Data(scrambledData)
     }
 
-    /// Descrambles the data using multi-threading (same as scramble, as XOR is symmetric).
-    func reverseMultiThreadedXORDescrambling(from data: Data, withKey key: Data) -> Data {
-        return applyMultiThreadedXORScrambling(to: data, withKey: key)
-    }
 }

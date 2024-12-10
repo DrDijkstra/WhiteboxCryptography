@@ -10,7 +10,7 @@ import CommonCrypto
 
 final class CryptographicServiceTests: XCTestCase {
 
-    var cryptographicService: CryptographicService!
+    var cryptographicService: CryptographicServiceImpl!
 
     override func setUp() {
         super.setUp()
@@ -112,8 +112,6 @@ final class CryptographicServiceTests: XCTestCase {
 
         // Iterate over each data size
         for size in dataSizes {
-            let testData = Data(repeating: 0x01, count: size)  // Generate data of specified size
-
             // Derive key
             guard let derivedKey = cryptographicService.deriveKey(fromPassword: password, salt: salt, iterations: 4) else {
                 XCTFail("Key derivation failed for data size: \(size)")

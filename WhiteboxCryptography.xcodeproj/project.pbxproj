@@ -43,7 +43,7 @@
 				Enum/CryptoAlgorithm.swift,
 				Scrumbler/MemoryScrambler.swift,
 				Scrumbler/MemoryScramblerImpl.swift,
-				WBCSdk.swift,
+				WhiteboxCryptographySDK.swift,
 			);
 			target = 6A5BC44E2D08B70D0058551F /* WhiteboxCryptographyTests */;
 		};
