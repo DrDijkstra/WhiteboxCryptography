@@ -11,10 +11,10 @@ import CommonCrypto
 public protocol CryptographicService {
     
     // Encrypt data using AES (with optional IV for CBC/GCM modes)
-    func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CCAlgorithm) -> Data?
+    func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) -> Data?
     
     // Decrypt data using AES (with optional IV for CBC/GCM modes)
-    func decrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CCAlgorithm) -> Data?
+    func decrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) -> Data?
     
     // Generate random Initialization Vector (IV) for AES CBC or GCM
     func generateRandomIV(forAlgorithm algorithm: CryptoAlgorithm) -> Data?

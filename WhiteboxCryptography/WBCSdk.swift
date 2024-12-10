@@ -22,7 +22,7 @@ public class WhiteboxCryptographySDK {
     }
     
     // MARK: - Encrypt Data
-    public func encrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CCAlgorithm = CCAlgorithm(kCCAlgorithmAES)) -> Data? {
+    public func encrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) -> Data? {
         // First scramble the data using the memory key
         let scrambledData = memoryScrambler.scramble(data: data, withKey: memoryKey)
         
@@ -31,7 +31,7 @@ public class WhiteboxCryptographySDK {
     }
     
     // MARK: - Decrypt Data
-    public func decrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CCAlgorithm = CCAlgorithm(kCCAlgorithmAES)) -> Data? {
+    public func decrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) -> Data? {
         // Decrypt the data using CryptographicService
         guard let decryptedData = cryptographicService.decrypt(data: data, withKey: key, iv: iv, algorithm: algorithm) else {
             return nil

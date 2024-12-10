@@ -38,6 +38,8 @@
 			membershipExceptions = (
 				Crypt/CryptographicService.swift,
 				Crypt/CryptographicServiceImpl.swift,
+				Enum/AESKeySize.swift,
+				Enum/AESMode.swift,
 				Enum/CryptoAlgorithm.swift,
 				Scrumbler/MemoryScrambler.swift,
 				Scrumbler/MemoryScramblerImpl.swift,

@@ -11,7 +11,7 @@ import CommonCrypto
 
 final class CryptographicServiceTests: XCTestCase {
 
-    var cryptographicService: CryptographicServiceImpl!
+    var cryptographicService: CryptographicService!
 
     override func setUp() {
         super.setUp()
@@ -26,21 +26,26 @@ final class CryptographicServiceTests: XCTestCase {
     // MARK: - AES Encryption/Decryption Tests
     
     func testAESEncryptionDecryption() {
-        let dataToEncrypt = "Test data for AES".data(using: .utf8)!
-        let key = Data("your-secret-key-1234".utf8) // Ensure this is 32 bytes for AES256
-        let iv = cryptographicService.generateRandomIV(forAlgorithm: .aes(keySize: .bits256, mode: .gcm))
+        // Ensure the key is exactly 32 bytes for AES-256
+        let key = Data(repeating: 0x01, count: 32)  // 32-byte key for AES-256
+        let iv = cryptographicService.generateRandomIV(forAlgorithm: .aes(keySize: .bits256, mode: .gcm))  // 12 bytes IV for AES-GCM
+        let dataToEncrypt = "This is a test".data(using: .utf8)!
 
         // Encryption
-        let encryptedData = cryptographicService.encrypt(data: dataToEncrypt, withKey: key, iv: iv)
-        XCTAssertNotNil(encryptedData, "Encryption failed")
+        guard let encryptedData = cryptographicService.encrypt(data: dataToEncrypt, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
+            XCTFail("Encryption failed")
+            return
+        }
 
         // Decryption
-        let decryptedData = cryptographicService.decrypt(data: encryptedData!, withKey: key, iv: iv)
-        XCTAssertNotNil(decryptedData, "Decryption failed")
-        
+        guard let decryptedData = cryptographicService.decrypt(data: encryptedData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
+            XCTFail("Decryption failed")
+            return
+        }
+
         // Check if the decrypted data matches the original data
-        let decryptedString = String(data: decryptedData!, encoding: .utf8)
-        XCTAssertEqual(decryptedString, "Test data for AES", "Decrypted data does not match the original")
+        let decryptedString = String(data: decryptedData, encoding: .utf8)
+        XCTAssertEqual(decryptedString, "This is a test")
     }
 
     // MARK: - HMAC Tests
@@ -64,7 +69,7 @@ final class CryptographicServiceTests: XCTestCase {
         let salt = Data("randomsalt".utf8)
 
         // Derive key
-        let derivedKey = cryptographicService.deriveKey(fromPassword: password, salt: salt)
+        let derivedKey = cryptographicService.deriveKey(fromPassword: password, salt: salt, iterations: 4)
         XCTAssertNotNil(derivedKey, "Key derivation failed")
         
         // Check if derived key has correct length

@@ -15,34 +15,60 @@ public enum CryptoAlgorithm {
     case cast
     case rc2
 
+    // Size of the initialization vector (IV) required for the algorithm
     var ivSize: Int {
         switch self {
         case .aes(_, let mode):
             switch mode {
             case .cbc:
-                return kCCBlockSizeAES128 // 16 bytes
+                return kCCBlockSizeAES128 // 16 bytes for AES CBC
             case .gcm:
-                return 12 // 12 bytes for AES-GCM
+                return 12 // 12 bytes for AES GCM
             }
         case .des:
-            return kCCBlockSizeDES // 8 bytes
+            return kCCBlockSizeDES // 8 bytes for DES
         case .tripleDES:
-            return kCCBlockSize3DES // 8 bytes
+            return kCCBlockSize3DES // 8 bytes for Triple DES
         case .cast:
-            return kCCBlockSizeCAST // 8 bytes
+            return kCCBlockSizeCAST // 8 bytes for CAST
         case .rc2:
-            return kCCBlockSizeRC2 // 8 bytes
+            return kCCBlockSizeRC2 // 8 bytes for RC2
         }
     }
-}
 
-public enum AESKeySize: Int {
-    case bits128 = 16  // 128 bits = 16 bytes
-    case bits192 = 24  // 192 bits = 24 bytes
-    case bits256 = 32  // 256 bits = 32 bytes
-}
+    // Convert CryptoAlgorithm to CommonCrypto CCAlgorithm
+    var ccAlgorithm: CCAlgorithm {
+        switch self {
+        case .aes(_, let mode):
+            switch mode {
+            case .cbc:
+                return CCAlgorithm(kCCAlgorithmAES)
+            case .gcm:
+                return CCAlgorithm(kCCAlgorithmAES) // AES-GCM uses the same AES algorithm
+            }
+        case .des:
+            return CCAlgorithm(kCCAlgorithmDES)
+        case .tripleDES:
+            return CCAlgorithm(kCCAlgorithm3DES)
+        case .cast:
+            return CCAlgorithm(kCCAlgorithmCAST)
+        case .rc2:
+            return CCAlgorithm(kCCAlgorithmRC2)
+        }
+    }
 
-public enum AESMode {
-    case cbc // Cipher Block Chaining
-    case gcm // Galois/Counter Mode
+    // Convert CryptoAlgorithm to the corresponding CCOptions
+    var ccOptions: CCOptions {
+        switch self {
+        case .aes(_, let mode):
+            switch mode {
+            case .cbc:
+                return CCOptions(kCCOptionPKCS7Padding)
+            case .gcm:
+                return CCOptions(0) // AES-GCM does not require padding
+            }
+        case .des, .tripleDES, .cast, .rc2:
+            return CCOptions(kCCOptionPKCS7Padding)
+        }
+    }
 }
