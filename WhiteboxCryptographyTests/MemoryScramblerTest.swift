@@ -27,51 +27,50 @@ final class MemoryScramblerTests: XCTestCase {
         super.tearDown()
     }
 
-    // Test scramble and descramble with AES
+    // Test AES scramble and descramble
     func testAES_ScrambleDescramble() {
-        let scrambledData = memoryScrambler.scrambleWithAES(data: testData, withKey: testKey)
-        let descrambledData = memoryScrambler.descrambleWithAES(data: scrambledData!, withKey: testKey)
+        guard let scrambledData = memoryScrambler.applyAESScrambling(to: testData, withKey: testKey) else {
+            XCTFail("AES scrambling failed")
+            return
+        }
+        
+        guard let descrambledData = memoryScrambler.reverseAESScrambling(from: scrambledData, withKey: testKey) else {
+            XCTFail("AES descrambling failed")
+            return
+        }
         
         // Assert that the original data is returned after descrambling
         XCTAssertEqual(testData, descrambledData, "AES scrambled and descrambled data should be equal")
     }
 
-    // Test scramble and descramble with XOR
+    // Test XOR scramble and descramble
     func testXOR_ScrambleDescramble() {
-        let scrambledData = memoryScrambler.scrambleWithXOR(data: testData, withKey: testKey)
-        let descrambledData = memoryScrambler.descrambleWithXOR(data: scrambledData, withKey: testKey)
+        let scrambledData = memoryScrambler.applyXORScrambling(to: testData, withKey: testKey)
+        let descrambledData = memoryScrambler.applyXORScrambling(to: scrambledData, withKey: testKey)
         
         // Assert that the original data is returned after descrambling
         XCTAssertEqual(testData, descrambledData, "XOR scrambled and descrambled data should be equal")
     }
 
-    // Test scramble and descramble with Byte Shift
+    // Test Byte Shift scramble and descramble
     func testShift_ScrambleDescramble() {
-        let scrambledData = memoryScrambler.scrambleWithShift(data: testData, shiftAmount: 3)
-        let descrambledData = memoryScrambler.scrambleWithShift(data: scrambledData, shiftAmount: -3)
+        let scrambledData = memoryScrambler.applyByteShiftScrambling(to: testData, by: 3)
+        let descrambledData = memoryScrambler.applyByteShiftScrambling(to: scrambledData, by: -3)
         
         // Assert that the original data is returned after descrambling
         XCTAssertEqual(testData, descrambledData, "Byte Shift scrambled and descrambled data should be equal")
     }
 
-    // Test scramble with Hashing (though it's not reversible, the resulting data should be different)
-    func testHashing_Scramble() {
-        let scrambledData = memoryScrambler.scrambleWithHashing(data: testData)
-        
-        // Assert that the scrambled data is not equal to the original data (since hashing modifies the data)
-        XCTAssertNotEqual(testData, scrambledData, "Hashing should scramble the data")
-    }
-
     // Test multi-threading scramble and descramble (this tests multi-threaded XOR operation)
     func testMultiThreading_ScrambleDescramble() {
-        let scrambledData = memoryScrambler.scrambleWithMultiThreading(data: testData, withKey: testKey)
-        let descrambledData = memoryScrambler.descrambleWithMultiThreading(data: scrambledData, withKey: testKey)
+        let scrambledData = memoryScrambler.applyMultiThreadedXORScrambling(to: testData, withKey: testKey)
+        let descrambledData = memoryScrambler.reverseMultiThreadedXORDescrambling(from: scrambledData, withKey: testKey)
         
         // Assert that the original data is returned after descrambling
         XCTAssertEqual(testData, descrambledData, "Multi-threaded XOR scrambled and descrambled data should be equal")
     }
 
-    // Test full scrambling with all techniques and descrambling
+    // Test full scramble and descramble using all techniques
     func testFullScrambleDescramble() {
         let scrambledData = memoryScrambler.scramble(data: testData, withKey: testKey)
         let descrambledData = memoryScrambler.descramble(data: scrambledData, withKey: testKey)
@@ -79,4 +78,13 @@ final class MemoryScramblerTests: XCTestCase {
         // Assert that the original data is returned after descrambling
         XCTAssertEqual(testData, descrambledData, "Full scramble and descramble should result in the original data")
     }
+
+    // Test hashing (scrambling isn't reversible, so it shouldn't match the original data)
+    func testHashing_Scramble() {
+        let scrambledData = memoryScrambler.applyXORScrambling(to: testData, withKey: testKey)
+        
+        // Assert that the scrambled data is not equal to the original data
+        XCTAssertNotEqual(testData, scrambledData, "XOR scrambling should change the data")
+    }
+
 }
