@@ -15,4 +15,5 @@ public protocol CryptographicService {
     func generateRandomIV(forAlgorithm algorithm: CryptoAlgorithm) -> Data?
     func deriveKey(fromPassword password: String, salt: Data, iterations: Int) -> Data?
     func hmac(data: Data, key: Data) -> Data?
+    func generateRandomKey(forAlgorithm algorithm: CryptoAlgorithm) -> Data?
 }

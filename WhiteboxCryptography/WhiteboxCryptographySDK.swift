@@ -21,7 +21,7 @@ public class WhiteboxCryptographySDK {
     }
     
     // MARK: - Encrypt Data
-    public func encrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) -> Data? {
+    public func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) -> Data? {
         let scrambledData = memoryScrambler.scramble(data: data, withKey: memoryKey)
         return cryptographicService.encrypt(data: scrambledData, withKey: key, iv: iv, algorithm: algorithm)
     }
@@ -47,5 +47,10 @@ public class WhiteboxCryptographySDK {
     // MARK: - HMAC Generation
     public func hmac(data: Data, key: Data) -> Data? {
         return cryptographicService.hmac(data: data, key: key)
+    }
+    
+    // MARK: - Key Derivation (PBKDF2)
+    public func generateRandomKey(forAlgorithm: CryptoAlgorithm) -> Data? {
+        return cryptographicService.generateRandomKey(forAlgorithm: forAlgorithm)
     }
 }

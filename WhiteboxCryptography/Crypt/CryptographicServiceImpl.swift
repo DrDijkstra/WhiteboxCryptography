@@ -13,14 +13,24 @@ class CryptographicServiceImpl: CryptographicService {
 
     // MARK: - Cryptographic operation (encryption or decryption)
     private func crypt(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) -> Data? {
-        // Handling AES-GCM separately
-        if case .aes(_, .gcm) = algorithm {
+        // Handle AES-GCM separately (no IV needed)
+        switch algorithm {
+        case .aes(_, .gcm):
             return gcmEncryptDecrypt(data: data, key: key, iv: iv, operation: operation)
+            
+        // For algorithms that require an IV (AES-CBC, DES, TripleDES, RC2, etc.)
+        case .aes(_, .cbc), .des, .tripleDES, .rc2, .cast:
+            guard let iv = iv else {
+                print("Error: An IV is mandatory for \(algorithm) encryption algorithm.")
+                return nil
+            }
         }
         
+        // Proceed with cryptographic operation (encryption or decryption)
         var result = [UInt8](repeating: 0, count: data.count + kCCBlockSizeAES128)
         var resultLength = 0
         
+        // Use the IV pointer if it's available
         let ivPointer = iv?.withUnsafeBytes { $0.baseAddress } ?? nil
         
         let status = key.withUnsafeBytes { keyPointer in
@@ -29,8 +39,8 @@ class CryptographicServiceImpl: CryptographicService {
                     CCOperation(operation),
                     algorithm.ccAlgorithm, // Use the ccAlgorithm from CryptoAlgorithm enum
                     algorithm.ccOptions,   // Use the ccOptions from CryptoAlgorithm enum
-                    keyPointer.baseAddress, key.count, // Use key.count for the key length
-                    ivPointer, // IV for CBC, can be nil for GCM or ECB
+                    keyPointer.baseAddress, key.count, // Key length
+                    ivPointer, // IV pointer (nil for modes like AES-GCM)
                     dataPointer.baseAddress, data.count,
                     &result, result.count,
                     &resultLength
@@ -45,6 +55,8 @@ class CryptographicServiceImpl: CryptographicService {
         
         return Data(result.prefix(resultLength))
     }
+
+
 
     // MARK: - AES Encryption with IV (CBC or GCM)
     public func encrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) -> Data? {
@@ -72,6 +84,50 @@ class CryptographicServiceImpl: CryptographicService {
             fatalError("Invalid operation for GCM.")
         }
     }
+    
+    // MARK: - Generate Random Key for Specified Algorithm
+    func generateRandomKey(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
+        let keyLength: Int
+        
+        // Determine the key length based on the selected algorithm
+        switch algorithm {
+        case .aes(let keySize, let mode):
+            switch mode {
+            case .cbc:
+                switch keySize {
+                case .bits128:
+                    keyLength = kCCKeySizeAES128 // 16 bytes for AES-128
+                case .bits192:
+                    keyLength = kCCKeySizeAES192 // 24 bytes for AES-192
+                case .bits256:
+                    keyLength = kCCKeySizeAES256 // 32 bytes for AES-256
+                }
+            case .gcm:
+                keyLength = 32
+            }
+        case .des:
+            keyLength = 8 // DES key size is fixed at 64 bits (8 bytes)
+
+        case .tripleDES:
+            keyLength = 24 // 3DES typically uses 192 bits (24 bytes)
+
+        case .cast:
+            keyLength = 16 // CAST typically uses 128-bit keys (16 bytes)
+
+        case .rc2:
+            keyLength = 16 // RC2 supports key sizes from 1 to 128 bytes (usually 16 bytes for default)
+        }
+        
+        // Generate the random key
+        var randomKey = Data(count: keyLength)
+        let result = randomKey.withUnsafeMutableBytes { bytes in
+            SecRandomCopyBytes(kSecRandomDefault, keyLength, bytes.baseAddress!)
+        }
+        
+        // If key generation is successful, return the key, else return nil
+        return result == errSecSuccess ? randomKey : nil
+    }
+
 
     // MARK: - AES GCM Encryption (Authenticated Encryption) - Using CryptoKit
     func encryptGCM(data: Data, withKey key: Data, iv: Data) -> Data? {
