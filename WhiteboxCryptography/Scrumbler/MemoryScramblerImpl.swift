@@ -9,7 +9,7 @@ import Foundation
 import CryptoKit
 
 /// Implementation of memory scrambling and descrambling using various cryptographic techniques.
-public class MemoryScramblerImpl: MemoryScrambler {
+class MemoryScramblerImpl: MemoryScrambler {
 
     /// Scrambles the provided data using a combination of XOR, byte shifting, AES encryption, and multi-threaded XOR.
     ///
@@ -17,7 +17,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     ///   - data: The data to be scrambled.
     ///   - key: The key used for scrambling.
     /// - Returns: The scrambled data.
-    public func scramble(data: Data, withKey key: Data) -> Data {
+    func scramble(data: Data, withKey key: Data) -> Data {
         var scrambledData = data
 
         // Apply XOR Scrambling
@@ -43,7 +43,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     ///   - data: The data to be descrambled.
     ///   - key: The key used for descrambling.
     /// - Returns: The descrambled data.
-    public func descramble(data: Data, withKey key: Data) -> Data {
+    func descramble(data: Data, withKey key: Data) -> Data {
         var descrambledData = data
 
         // Reverse Multi-threaded XOR Descrambling
@@ -66,7 +66,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     // MARK: - Scrambling Techniques
 
     /// Scrambles the data using AES encryption.
-    private func applyAESScrambling(to data: Data, withKey key: Data) -> Data? {
+    func applyAESScrambling(to data: Data, withKey key: Data) -> Data? {
         let aesKey = SymmetricKey(data: key.prefix(32)) // Use first 256 bits if longer
         
         do {
@@ -78,7 +78,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     }
 
     /// Descrambles the data using AES decryption.
-    private func reverseAESScrambling(from data: Data, withKey key: Data) -> Data? {
+    func reverseAESScrambling(from data: Data, withKey key: Data) -> Data? {
         let aesKey = SymmetricKey(data: key.prefix(32)) // Use first 256 bits if longer
         
         do {
@@ -91,7 +91,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     }
 
     /// Scrambles the data using XOR (simple reversible scrambling).
-    private func applyXORScrambling(to data: Data, withKey key: Data) -> Data {
+    func applyXORScrambling(to data: Data, withKey key: Data) -> Data {
         var scrambledData = [UInt8](repeating: 0, count: data.count)
         let keyCount = key.count
         
@@ -105,7 +105,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     }
 
     /// Scrambles the data using a simple byte-shift method.
-    private func applyByteShiftScrambling(to data: Data, by shiftAmount: Int) -> Data {
+    func applyByteShiftScrambling(to data: Data, by shiftAmount: Int) -> Data {
         var scrambledData = [UInt8](repeating: 0, count: data.count)
         
         // Shift each byte by the specified amount and handle overflows
@@ -120,7 +120,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     }
 
     /// Scrambles the data using multi-threading for faster performance on large datasets.
-    private func applyMultiThreadedXORScrambling(to data: Data, withKey key: Data) -> Data {
+    func applyMultiThreadedXORScrambling(to data: Data, withKey key: Data) -> Data {
         var scrambledData = [UInt8](repeating: 0, count: data.count)
         let keyCount = key.count
         let queue = DispatchQueue(label: "com.memoryscrambler.concurrent", attributes: .concurrent)
@@ -149,7 +149,7 @@ public class MemoryScramblerImpl: MemoryScrambler {
     }
 
     /// Descrambles the data using multi-threading (same as scramble, as XOR is symmetric).
-    private func reverseMultiThreadedXORDescrambling(from data: Data, withKey key: Data) -> Data {
+    func reverseMultiThreadedXORDescrambling(from data: Data, withKey key: Data) -> Data {
         return applyMultiThreadedXORScrambling(to: data, withKey: key)
     }
 }
