@@ -13,8 +13,8 @@ public class CryptographicServiceImpl: CryptographicService {
     
     // MARK: - Cryptographic operation (encryption or decryption)
     public func crypt(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CCAlgorithm = CCAlgorithm(kCCAlgorithmAES)) -> Data? {
-        var keyBytes = [UInt8](key)
-        var dataBytes = [UInt8](data)
+        _ = [UInt8](key)
+        _ = [UInt8](data)
         var result = [UInt8](repeating: 0, count: data.count + kCCBlockSizeAES128)
         var resultLength = 0
         
@@ -87,7 +87,7 @@ public class CryptographicServiceImpl: CryptographicService {
     public func hmac(data: Data, key: Data) -> Data? {
         var result = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         
-        _ = key.withUnsafeBytes { keyPointer in
+        key.withUnsafeBytes { keyPointer in
             data.withUnsafeBytes { dataPointer in
                 CCHmac(
                     CCHmacAlgorithm(kCCHmacAlgSHA256),

@@ -8,7 +8,7 @@
 import Foundation
 import CommonCrypto
 
-public class WhiteboxCryptography {
+public class WhiteboxCryptographySDK {
     
     private let memoryKey: Data
     private let cryptographicService: CryptographicService
