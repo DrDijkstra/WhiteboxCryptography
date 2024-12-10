@@ -17,7 +17,7 @@ public protocol CryptographicService {
     func decrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CCAlgorithm) -> Data?
     
     // Generate random Initialization Vector (IV) for AES CBC or GCM
-    func generateRandomIV() -> Data?
+    func generateRandomIV(forAlgorithm algorithm: CryptoAlgorithm) -> Data?
     
     // Derive key using PBKDF2 from a password
     func deriveKey(fromPassword password: String, salt: Data, iterations: Int) -> Data?

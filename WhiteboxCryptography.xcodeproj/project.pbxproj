@@ -38,6 +38,7 @@
 			membershipExceptions = (
 				Crypt/CryptographicService.swift,
 				Crypt/CryptographicServiceImpl.swift,
+				Enum/CryptoAlgorithm.swift,
 				Scrumbler/MemoryScrambler.swift,
 				Scrumbler/MemoryScramblerImpl.swift,
 				WBCSdk.swift,

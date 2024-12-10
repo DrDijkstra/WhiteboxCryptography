@@ -42,8 +42,8 @@ public class WhiteboxCryptographySDK {
     }
     
     // MARK: - IV Generation
-    public func generateRandomIV() -> Data? {
-        return cryptographicService.generateRandomIV()
+    public func generateRandomIV(forAlgorithm: CryptoAlgorithm) -> Data? {
+        return cryptographicService.generateRandomIV(forAlgorithm: forAlgorithm)
     }
     
     // MARK: - Key Derivation (PBKDF2)

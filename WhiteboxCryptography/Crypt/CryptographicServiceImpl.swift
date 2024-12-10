@@ -54,34 +54,52 @@ public class CryptographicServiceImpl: CryptographicService {
     }
     
     // MARK: - Generate Random Initialization Vector (IV) for AES CBC or GCM
-    public func generateRandomIV() -> Data? {
-        var iv = Data(count: kCCBlockSizeAES128) // Standard block size for AES
+    public func generateRandomIV(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
+       
+        
+        // Generate random IV of the determined size
+        var iv = Data(count: algorithm.ivSize)
         let result = iv.withUnsafeMutableBytes { bytes in
-            SecRandomCopyBytes(kSecRandomDefault, bytes.count, bytes.baseAddress!)
+            SecRandomCopyBytes(kSecRandomDefault, algorithm.ivSize, bytes.baseAddress!)
         }
         
         return result == errSecSuccess ? iv : nil
     }
+
     
     // MARK: - Key Derivation using PBKDF2
     public func deriveKey(fromPassword password: String, salt: Data, iterations: Int = 10000) -> Data? {
-        var key = Data(repeating: 0, count: kCCKeySizeAES256)
+        let keyLength = kCCKeySizeAES256 // 32 bytes for AES-256
+        var derivedKey = Data(repeating: 0, count: keyLength)
+
+        let passwordData = password.data(using: .utf8) ?? Data()
         
-        let status = password.withCString { passwordPointer in
+        let status = derivedKey.withUnsafeMutableBytes { derivedKeyPointer in
             salt.withUnsafeBytes { saltPointer in
-                CCKeyDerivationPBKDF(
-                    CCPBKDFAlgorithm(kCCPBKDF2),
-                    passwordPointer, password.count,
-                    saltPointer.baseAddress, salt.count,
-                    CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
-                    UInt32(iterations),
-                    &key, key.count
-                )
+                passwordData.withUnsafeBytes { passwordPointer in
+                    CCKeyDerivationPBKDF(
+                        CCPBKDFAlgorithm(kCCPBKDF2),
+                        passwordPointer.baseAddress?.assumingMemoryBound(to: Int8.self),
+                        passwordData.count,
+                        saltPointer.baseAddress,
+                        salt.count,
+                        CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
+                        UInt32(iterations),
+                        derivedKeyPointer.baseAddress,
+                        keyLength
+                    )
+                }
             }
         }
-        
-        return status == kCCSuccess ? key : nil
+
+        guard status == kCCSuccess else {
+            print("Key derivation failed with status: \(status)")
+            return nil
+        }
+
+        return derivedKey
     }
+
     
     // MARK: - HMAC for Integrity Checking
     public func hmac(data: Data, key: Data) -> Data? {
@@ -103,16 +121,26 @@ public class CryptographicServiceImpl: CryptographicService {
     
     // MARK: - AES GCM Encryption/Decryption (Authenticated Encryption) - Using CryptoKit
     public func encryptGCM(data: Data, withKey key: Data, iv: Data) -> Data? {
+        guard key.count == 32 else {
+            print("Invalid key size: \(key.count). Key must be 32 bytes for AES256.")
+            return nil
+        }
+        guard iv.count == 12 else {
+            print("Invalid IV size: \(iv.count). IV must be 12 bytes for AES-GCM.")
+            return nil
+        }
+
         let symmetricKey = SymmetricKey(data: key)
-        
+
         do {
             let sealedBox = try AES.GCM.seal(data, using: symmetricKey, nonce: AES.GCM.Nonce(data: iv))
             return sealedBox.combined
         } catch {
-            print("GCM encryption failed: \(error)")
+            print("GCM encryption failed: \(error.localizedDescription)")
             return nil
         }
     }
+
     
     public func decryptGCM(data: Data, withKey key: Data, iv: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: key)
