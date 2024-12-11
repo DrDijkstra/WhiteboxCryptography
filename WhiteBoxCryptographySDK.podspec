@@ -19,7 +19,7 @@ Pod::Spec.new do |spec|
 
   spec.source = { :git => 'https://github.com/DrDijkstra/WhiteboxCryptography.git', :tag => spec.version.to_s }
 
-  spec.source_files  = "WhiteboxCryptography/Sources/**/*.swift"
+  spec.source_files  = "Sources/**/*.swift"
   spec.swift_versions  = "5.0"
 
 end
