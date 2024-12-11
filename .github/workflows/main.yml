@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - develop
     tags:
       - "*"
 
@@ -22,4 +22,4 @@ jobs:
 
       - name: Upload to Carthage
         run: |
-          carthage build --archive
+          carthage build --use-xcframeworks --archive
