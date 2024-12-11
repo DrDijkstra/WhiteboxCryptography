@@ -1,10 +1,11 @@
-<img src="Images/wbc.png" alt="White Box Cryptography Logo" height="150">
+<img src="https://raw.githubusercontent.com/DrDijkstra/WhiteboxCryptography/develop/Images/wbc.png" alt="White Box Cryptography Logo" height="150">
+
 
 # White Box Cryptography Framework
 
 [![Swift](https://img.shields.io/badge/Swift-5.9_5.10_6.0-orange?style=flat-square)](https://img.shields.io/badge/Swift-5.9_5.10_6.0-Orange?style=flat-square)
 [![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS-Green?style=flat-square)
-[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/WhiteBoxCryptography.svg?style=flat-square)](https://img.shields.io/cocoapods/v/WhiteBoxCryptography.svg)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/WhiteboxCryptographySDK.svg?style=flat-square)](https://img.shields.io/cocoapods/v/WhiteboxCryptographySDK.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square)](https://github.com/Carthage/Carthage)
 [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
 

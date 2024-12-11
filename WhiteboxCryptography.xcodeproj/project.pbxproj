@@ -26,7 +26,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6ADD300A2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptography" target */ = {
+		6ADD300A2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptography" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				WhiteboxCryptography/Crypt/CryptographicService.swift,
@@ -45,7 +45,7 @@
 			);
 			target = 6A5BC4442D08B70D0058551F /* WhiteboxCryptography */;
 		};
-		6ADD300B2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptographyTests" target */ = {
+		6ADD300B2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptographyTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				WhiteboxCryptography/WhiteboxCryptography.docc,
@@ -60,13 +60,13 @@
 			path = WhiteboxCryptographyTests;
 			sourceTree = "<group>";
 		};
-		6ADD2FE82D09469000F21A7D /* Sources */ = {
+		6ADD2FE82D09469000F21A7D /* Source */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				6ADD300A2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptography" target */,
-				6ADD300B2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptographyTests" target */,
+				6ADD300A2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptography" target */,
+				6ADD300B2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptographyTests" target */,
 			);
-			path = Sources;
+			path = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -93,7 +93,7 @@
 		6A5BC43B2D08B70D0058551F = {
 			isa = PBXGroup;
 			children = (
-				6ADD2FE82D09469000F21A7D /* Sources */,
+				6ADD2FE82D09469000F21A7D /* Source */,
 				6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */,
 				6A5BC4462D08B70D0058551F /* Products */,
 			);
@@ -156,7 +156,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */,
-				6ADD2FE82D09469000F21A7D /* Sources */,
+				6ADD2FE82D09469000F21A7D /* Source */,
 			);
 			name = WhiteboxCryptographyTests;
 			packageProductDependencies = (
