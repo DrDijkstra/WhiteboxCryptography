@@ -18,7 +18,7 @@ To integrate the White Box Cryptography framework into your Xcode project using 
 
 1. Open your Xcode project.
 2. Go to **File > Swift Packages > Add Package Dependency**.
-3. Enter the repository URL for this framework: `https://github.com/yourusername/WhiteBoxCryptography.git`.
+3. Enter the repository URL for this framework: `https://github.com/DrDijkstra/WhiteboxCryptography`.
 4. Choose the version range or tag for the release you want to use.
 
 ### Using CocoaPods
@@ -58,9 +58,18 @@ print("Decrypted String: \(decryptedString ?? "Failed to decrypt")")
 
 ### Available Cryptographic Algorithms
 
-- **AES** (Advanced Encryption Standard)
-- **RSA** (Rivest–Shamir–Adleman)
-- **SHA-256** (Secure Hash Algorithm)
+The following cryptographic algorithms are available in this implementation:
+
+- **AES** (Advanced Encryption Standard): A symmetric key encryption standard used for securing data.
+  - Supports different key sizes (`AESKeySize`) and modes of operation (`AESMode`).
+  
+- **DES** (Data Encryption Standard): A symmetric-key block cipher, formerly a widely-used method of data encryption.
+
+- **Triple DES** (3DES): An enhancement of DES that applies the DES algorithm three times to each data block.
+
+- **CAST**: A family of symmetric-key block ciphers designed for strong encryption.
+
+- **RC2** (Ron's Code 2): A block cipher designed for use in hardware or software environments, often used for file encryption.
 
 The framework supports encryption, decryption, and hashing for these algorithms in a white-box cryptographic fashion.
 
