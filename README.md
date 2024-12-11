@@ -36,7 +36,7 @@ To integrate the White Box Cryptography framework into your Xcode project using 
 1. Add the following to your `Podfile`:
 
 ```ruby
-pod 'WhiteBoxCryptography', '~> 1.0.5'
+pod 'WhiteBoxCryptography', '~> 1.0.0'
 ```
 
 2. Run `pod install` in the terminal.
