@@ -18,4 +18,8 @@ jobs:
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: |
-          pod trunk push WhiteBoxCryptographySDK.podspec
+          pod trunk push YourLibraryName.podspec
+
+      - name: Upload to Carthage
+        run: |
+          carthage build --archive
