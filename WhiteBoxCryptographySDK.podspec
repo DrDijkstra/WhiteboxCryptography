@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "WhiteboxCryptographySDK"
-  spec.version      = "1.0.1"
+  spec.version      = "1.0.2"
   spec.summary      = "A cryptographic SDK using white-box cryptography techniques."
   spec.description  = <<-DESC
                       This SDK provides a set of cryptographic functions like AES encryption, decryption, HMAC, and key derivation using PBKDF2.
@@ -11,8 +11,8 @@ Pod::Spec.new do |spec|
 
 
   spec.author             = { "Sanjay Dey" => "deysanjay285@gmail.com" }
-  spec.ios.deployment_target = "16.6"
-  spec.osx.deployment_target = "15.0"
+  spec.ios.deployment_target = "13.0"
+  spec.osx.deployment_target = "14.0"
   spec.watchos.deployment_target = "8.7"
   spec.tvos.deployment_target = "15.6"
   spec.visionos.deployment_target = "1.3"
