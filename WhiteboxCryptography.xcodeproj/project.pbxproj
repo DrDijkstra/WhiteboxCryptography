@@ -88,7 +88,7 @@
 		6A5BC43B2D08B70D0058551F = {
 			isa = PBXGroup;
 			children = (
-				6A5BC4472D08B70D0058551F /* WhiteboxCryptography */,
+				6ADD2F0F2D09072200F21A7D /* Sources */,
 				6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */,
 				6A5BC4462D08B70D0058551F /* Products */,
 			);
@@ -101,6 +101,14 @@
 				6A5BC44F2D08B70D0058551F /* WhiteboxCryptographyTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6ADD2F0F2D09072200F21A7D /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				6A5BC4472D08B70D0058551F /* WhiteboxCryptography */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

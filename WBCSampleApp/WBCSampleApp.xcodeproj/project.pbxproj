@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6ADD2F132D09082C00F21A7D /* WhiteboxCryptography in Frameworks */ = {isa = PBXBuildFile; productRef = 6ADD2F122D09082C00F21A7D /* WhiteboxCryptography */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		6A5BC4872D08B8630058551F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ADD2F132D09082C00F21A7D /* WhiteboxCryptography in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 				6A5BC4772D08B85B0058551F /* WBCSampleApp */,
 				6A5BC4892D08B8630058551F /* WBCSampleAppTests */,
 				6A5BC4932D08B8630058551F /* WBCSampleAppUITests */,
+				6ADD2F112D09082C00F21A7D /* Frameworks */,
 				6A5BC4762D08B85B0058551F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +96,13 @@
 				6A5BC4902D08B8630058551F /* WBCSampleAppUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6ADD2F112D09082C00F21A7D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +125,7 @@
 			);
 			name = WBCSampleApp;
 			packageProductDependencies = (
+				6ADD2F122D09082C00F21A7D /* WhiteboxCryptography */,
 			);
 			productName = WBCSampleApp;
 			productReference = 6A5BC4752D08B85B0058551F /* WBCSampleApp.app */;
@@ -195,6 +209,9 @@
 			);
 			mainGroup = 6A5BC46C2D08B85B0058551F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6ADD2F102D09074700F21A7D /* XCLocalSwiftPackageReference "../../WhiteboxCryptography" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6A5BC4762D08B85B0058551F /* Products */;
 			projectDirPath = "";
@@ -591,6 +608,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		6ADD2F102D09074700F21A7D /* XCLocalSwiftPackageReference "../../WhiteboxCryptography" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../WhiteboxCryptography;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6ADD2F122D09082C00F21A7D /* WhiteboxCryptography */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6ADD2F102D09074700F21A7D /* XCLocalSwiftPackageReference "../../WhiteboxCryptography" */;
+			productName = WhiteboxCryptography;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6A5BC46D2D08B85B0058551F /* Project object */;
 }
