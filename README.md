@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/DrDijkstra/WhiteboxCryptography/develop/Images/wbc.png" alt="White Box Cryptography Logo" height="150">
+<img src="https://raw.githubusercontent.com/DrDijkstra/WhiteboxCryptography/develop/Images/wbc.png" alt="White Box Cryptography Logo">
 
 
 # White Box Cryptography Framework
@@ -36,7 +36,7 @@ To integrate the White Box Cryptography framework into your Xcode project using 
 1. Add the following to your `Podfile`:
 
 ```ruby
-pod 'WhiteBoxCryptography', '~> 1.0.1'
+ pod 'WhiteboxCryptographySDK', '~> 1.0'
 ```
 
 2. Run `pod install` in the terminal.
@@ -55,26 +55,65 @@ Then run `carthage update` to build the framework.
 
 ## Usage
 
-To use the White Box Cryptography framework, simply import it into your project:
+To use the White Box Cryptography framework in your project, follow the appropriate instructions based on your package manager:
+
+### For Swift Package Manager (SPM)
+
+Simply import the framework into your Swift files:
 
 ```swift
 import WhiteBoxCryptography
 ```
 
-### Example Usage
+### For Carthage or CocoaPods
+
+Import the framework using the following:
+
+```swift
+import WhiteboxCryptographySDK
+```
+
+---
+
+### Notes:
+- Ensure the framework is properly integrated into your project according to the package manager's setup instructions.
+- Double-check the capitalization of `WhiteBoxCryptography` and `WhiteboxCryptographySDK` as some environments may be case-sensitive.
+
+### Example Usage of `WhiteboxCryptographySDK`
 
 ```swift
 // Example of how to use the encryption and decryption functionalities
 
-// Encrypting data
-let data = "Sensitive data".data(using: .utf8)!
-let encryptedData = WhiteBoxCryptography.encrypt(data: data)
+import Foundation
 
-// Decrypting data
-let decryptedData = WhiteBoxCryptography.decrypt(data: encryptedData)
-let decryptedString = String(data: decryptedData, encoding: .utf8)
-print("Decrypted String: \(decryptedString ?? "Failed to decrypt")")
+// Initialize the WhiteboxCryptographySDK with a memory key
+let memoryKey = "your-memory-key".data(using: .utf8)!
+let whiteboxSDK = WhiteboxCryptographySDK(memoryKey: memoryKey)
+
+// Sample data to encrypt
+let data = "Sensitive data".data(using: .utf8)!
+
+// Define a cryptographic key and IV
+let encryptionKey = "your-encryption-key".data(using: .utf8)!
+let iv = "your-iv-string".data(using: .utf8) // Optional IV for block ciphers
+let algorithm: CryptoAlgorithm = .aes // Replace with the actual algorithm
+
+// Encrypt the data
+if let encryptedData = whiteboxSDK.encrypt(data: data, withKey: encryptionKey, iv: iv, algorithm: algorithm) {
+    print("Encrypted Data: \(encryptedData.base64EncodedString())")
+    
+    // Decrypt the data
+    if let decryptedData = whiteboxSDK.decrypt(data: encryptedData, withKey: encryptionKey, iv: iv, algorithm: algorithm) {
+        let decryptedString = String(data: decryptedData, encoding: .utf8)
+        print("Decrypted String: \(decryptedString ?? "Failed to decrypt")")
+    } else {
+        print("Decryption failed")
+    }
+} else {
+    print("Encryption failed")
+}
 ```
+---
 
 ### Available Cryptographic Algorithms
 
