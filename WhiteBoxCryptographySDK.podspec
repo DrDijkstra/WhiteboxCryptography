@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "WhiteboxCryptographySDK"
-  spec.version      = "1.0.2"
+  spec.version      = "1.0.3"
   spec.summary      = "A cryptographic SDK using white-box cryptography techniques."
   spec.description  = <<-DESC
                       This SDK provides a set of cryptographic functions like AES encryption, decryption, HMAC, and key derivation using PBKDF2.
@@ -18,7 +18,7 @@ Pod::Spec.new do |spec|
   spec.visionos.deployment_target = "1.3"
 
   spec.source = { :git => 'https://github.com/DrDijkstra/WhiteboxCryptography.git', :tag => spec.version.to_s }
-
+  spec.readme = https://github.com/DrDijkstra/WhiteboxCryptography/blob/develop/README.md
   spec.source_files  = "Source/**/*.swift"
   spec.swift_versions  = "5.0"
 
