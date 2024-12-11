@@ -86,12 +86,11 @@ void writeToFileAsChars(const vector<int>& sbox, const vector<int>& inverseSbox,
     createDirectoryIfNeeded(dirPath);
 
     // Define the output file path in the custom directory
-    string filePath = dirPath + "/Sbox_InvSbox_Rcon";
+    string filePath = dirPath + "/Sbox_InvSbox_Rcon.txt";
 
     ofstream outFile(filePath);
 
     if (outFile.is_open()) {
-        outFile << "S-box (as characters):" << endl;
         for (int i = 0; i < 256; ++i) {
             // Convert hex values to characters and print
             char charOut = static_cast<char>(sbox[i]);
@@ -101,7 +100,6 @@ void writeToFileAsChars(const vector<int>& sbox, const vector<int>& inverseSbox,
             }
         }
 
-        outFile << "\nInverse S-box (as characters):" << endl;
         for (int i = 0; i < 256; ++i) {
             // Convert hex values to characters and print
             char charOut = static_cast<char>(inverseSbox[i]);
@@ -111,7 +109,6 @@ void writeToFileAsChars(const vector<int>& sbox, const vector<int>& inverseSbox,
             }
         }
 
-        outFile << "\nRound Constants (rcon) (as characters):" << endl;
         for (int i = 0; i < 10; ++i) {
             // Convert hex values to characters and print
             char charOut = static_cast<char>(rcon[i]);
@@ -128,6 +125,7 @@ void writeToFileAsChars(const vector<int>& sbox, const vector<int>& inverseSbox,
     }
 }
 
+
 // Function to read the file and reconstruct the S-box, Inverse S-box, and Rcon
 void readFromFileAsChars(vector<int>& sbox, vector<int>& inverseSbox, vector<int>& rcon, const string& filePath) {
     ifstream inFile(filePath);
@@ -139,30 +137,23 @@ void readFromFileAsChars(vector<int>& sbox, vector<int>& inverseSbox, vector<int
     string line;
     int index = 0;
 
-    // Reading S-box
-    getline(inFile, line); // Read the first line ("S-box (as characters):")
+    
     while (getline(inFile, line) && index < 256) {
         for (char ch : line) {
             sbox[index++] = static_cast<unsigned char>(ch);  // Convert char to int (unsigned byte)
         }
     }
 
-    // Reset index for Inverse S-box
     index = 0;
 
-    // Reading Inverse S-box
-    getline(inFile, line); // Read the second line ("Inverse S-box (as characters):")
     while (getline(inFile, line) && index < 256) {
         for (char ch : line) {
             inverseSbox[index++] = static_cast<unsigned char>(ch);  // Convert char to int (unsigned byte)
         }
     }
 
-    // Reset index for Rcon
     index = 0;
 
-    // Reading Round Constants (rcon)
-    getline(inFile, line); // Read the third line ("Round Constants (rcon) (as characters):")
     while (getline(inFile, line) && index < 10) {
         for (char ch : line) {
             rcon[index++] = static_cast<unsigned char>(ch);  // Convert char to int (unsigned byte)

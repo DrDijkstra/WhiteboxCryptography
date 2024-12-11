@@ -34,6 +34,7 @@
 				WhiteboxCryptography/Enum/AESKeySize.swift,
 				WhiteboxCryptography/Enum/AESMode.swift,
 				WhiteboxCryptography/Enum/CryptoAlgorithm.swift,
+				WhiteboxCryptography/Sbox_InvSbox_Rcon.txt,
 				WhiteboxCryptography/Scrumbler/MemoryScrambler.swift,
 				WhiteboxCryptography/Scrumbler/MemoryScramblerImpl.swift,
 				WhiteboxCryptography/WhiteboxCryptography.docc,
