@@ -26,42 +26,47 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6A5BC4572D08B70D0058551F /* Exceptions for "WhiteboxCryptography" folder in "WhiteboxCryptography" target */ = {
+		6ADD300A2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptography" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WhiteboxCryptography/Crypt/CryptographicService.swift,
+				WhiteboxCryptography/Crypt/CryptographicServiceImpl.swift,
+				WhiteboxCryptography/Enum/AESKeySize.swift,
+				WhiteboxCryptography/Enum/AESMode.swift,
+				WhiteboxCryptography/Enum/CryptoAlgorithm.swift,
+				WhiteboxCryptography/Scrumbler/MemoryScrambler.swift,
+				WhiteboxCryptography/Scrumbler/MemoryScramblerImpl.swift,
+				WhiteboxCryptography/WhiteboxCryptography.docc,
+				WhiteboxCryptography/WhiteboxCryptography.h,
+				WhiteboxCryptography/WhiteboxCryptographySDK.swift,
+			);
 			publicHeaders = (
-				WhiteboxCryptography.h,
+				WhiteboxCryptography/WhiteboxCryptography.h,
 			);
 			target = 6A5BC4442D08B70D0058551F /* WhiteboxCryptography */;
 		};
-		6A5BC4D62D08C4860058551F /* Exceptions for "WhiteboxCryptography" folder in "WhiteboxCryptographyTests" target */ = {
+		6ADD300B2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptographyTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Crypt/CryptographicService.swift,
-				Crypt/CryptographicServiceImpl.swift,
-				Enum/AESKeySize.swift,
-				Enum/AESMode.swift,
-				Enum/CryptoAlgorithm.swift,
-				Scrumbler/MemoryScrambler.swift,
-				Scrumbler/MemoryScramblerImpl.swift,
-				WhiteboxCryptographySDK.swift,
+				WhiteboxCryptography/WhiteboxCryptography.docc,
 			);
 			target = 6A5BC44E2D08B70D0058551F /* WhiteboxCryptographyTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6A5BC4472D08B70D0058551F /* WhiteboxCryptography */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				6A5BC4572D08B70D0058551F /* Exceptions for "WhiteboxCryptography" folder in "WhiteboxCryptography" target */,
-				6A5BC4D62D08C4860058551F /* Exceptions for "WhiteboxCryptography" folder in "WhiteboxCryptographyTests" target */,
-			);
-			path = WhiteboxCryptography;
-			sourceTree = "<group>";
-		};
 		6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WhiteboxCryptographyTests;
+			sourceTree = "<group>";
+		};
+		6ADD2FE82D09469000F21A7D /* Sources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6ADD300A2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptography" target */,
+				6ADD300B2D09469000F21A7D /* Exceptions for "Sources" folder in "WhiteboxCryptographyTests" target */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -88,7 +93,7 @@
 		6A5BC43B2D08B70D0058551F = {
 			isa = PBXGroup;
 			children = (
-				6ADD2F0F2D09072200F21A7D /* Sources */,
+				6ADD2FE82D09469000F21A7D /* Sources */,
 				6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */,
 				6A5BC4462D08B70D0058551F /* Products */,
 			);
@@ -101,14 +106,6 @@
 				6A5BC44F2D08B70D0058551F /* WhiteboxCryptographyTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		6ADD2F0F2D09072200F21A7D /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				6A5BC4472D08B70D0058551F /* WhiteboxCryptography */,
-			);
-			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,9 +134,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				6A5BC4472D08B70D0058551F /* WhiteboxCryptography */,
-			);
 			name = WhiteboxCryptography;
 			packageProductDependencies = (
 			);
@@ -162,6 +156,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */,
+				6ADD2FE82D09469000F21A7D /* Sources */,
 			);
 			name = WhiteboxCryptographyTests;
 			packageProductDependencies = (

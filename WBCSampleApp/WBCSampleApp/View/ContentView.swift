@@ -9,11 +9,9 @@ import SwiftUI
 import Combine
 
 struct ContentView: View {
+    
     @StateObject var viewModel: ContentViewModel
-    
     @FocusState private var isInputFocused: Bool
-    
- 
     
     var body: some View {
         VStack(spacing: 20) {
