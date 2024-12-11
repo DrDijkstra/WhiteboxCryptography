@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		6ADD2F1A2D091E3B00F21A7D /* WhiteboxCryptography in Frameworks */ = {isa = PBXBuildFile; productRef = 6ADD2F192D091E3B00F21A7D /* WhiteboxCryptography */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		6A5BC4872D08B8630058551F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -56,7 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6ADD2F1A2D091E3B00F21A7D /* WhiteboxCryptography in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,7 +120,6 @@
 			);
 			name = WBCSampleApp;
 			packageProductDependencies = (
-				6ADD2F192D091E3B00F21A7D /* WhiteboxCryptography */,
 			);
 			productName = WBCSampleApp;
 			productReference = 6A5BC4752D08B85B0058551F /* WBCSampleApp.app */;
@@ -210,7 +204,6 @@
 			mainGroup = 6A5BC46C2D08B85B0058551F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				6ADD2F182D091E3B00F21A7D /* XCRemoteSwiftPackageReference "WhiteboxCryptography" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6A5BC4762D08B85B0058551F /* Products */;
@@ -608,25 +601,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		6ADD2F182D091E3B00F21A7D /* XCRemoteSwiftPackageReference "WhiteboxCryptography" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/DrDijkstra/WhiteboxCryptography";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		6ADD2F192D091E3B00F21A7D /* WhiteboxCryptography */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6ADD2F182D091E3B00F21A7D /* XCRemoteSwiftPackageReference "WhiteboxCryptography" */;
-			productName = WhiteboxCryptography;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6A5BC46D2D08B85B0058551F /* Project object */;
 }

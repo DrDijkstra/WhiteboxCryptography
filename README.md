@@ -36,7 +36,7 @@ To integrate the White Box Cryptography framework into your Xcode project using 
 1. Add the following to your `Podfile`:
 
 ```ruby
-pod 'WhiteBoxCryptography', '~> 1.0.0'
+pod 'WhiteBoxCryptography', '~> 1.0.1'
 ```
 
 2. Run `pod install` in the terminal.
@@ -48,7 +48,7 @@ pod 'WhiteBoxCryptography', '~> 1.0.0'
 To integrate White Box Cryptography with Carthage, add the following to your `Cartfile`:
 
 ```
-github "DrDijkstra/WhiteboxCryptography" ~> 1.0.0
+github "DrDijkstra/WhiteboxCryptography" ~> 1.0.1
 ```
 
 Then run `carthage update` to build the framework.

@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "WhiteboxCryptographySDK"
-  spec.version      = "1.0.0"
+  spec.version      = "1.0.1"
   spec.summary      = "A cryptographic SDK using white-box cryptography techniques."
   spec.description  = <<-DESC
                       This SDK provides a set of cryptographic functions like AES encryption, decryption, HMAC, and key derivation using PBKDF2.
