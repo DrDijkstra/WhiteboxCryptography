@@ -18,7 +18,7 @@ Pod::Spec.new do |spec|
   spec.visionos.deployment_target = "1.3"
 
   spec.source = { :git => 'https://github.com/DrDijkstra/WhiteboxCryptography.git', :tag => spec.version.to_s }
-  spec.readme = https://github.com/DrDijkstra/WhiteboxCryptography/blob/develop/README.md
+  spec.readme = "https://github.com/DrDijkstra/WhiteboxCryptography/blob/develop/README.md"
   spec.source_files  = "Source/**/*.swift"
   spec.swift_versions  = "5.0"
 
