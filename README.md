@@ -1,4 +1,13 @@
+<img src="Images/wbc.png" alt="White Box Cryptography Logo" height="200">
+
 # White Box Cryptography Framework
+
+[![Swift](https://img.shields.io/badge/Swift-5.9_5.10_6.0-orange?style=flat-square)](https://img.shields.io/badge/Swift-5.9_5.10_6.0-Orange?style=flat-square)
+[![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS_Linux_Windows_Android-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_vision_OS_Linux_Windows_Android-Green?style=flat-square)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg?style=flat-square)](https://img.shields.io/cocoapods/v/Alamofire.svg)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
+[![Swift Forums](https://img.shields.io/badge/Swift_Forums-Alamofire-orange?style=flat-square)](https://forums.swift.org/c/related-projects/alamofire/37)
 
 A high-performance White Box Cryptography (WBC) framework designed to secure cryptographic keys and operations in a way that prevents attackers from extracting or reverse-engineering them, even when the code and memory are fully exposed. This framework implements cryptographic algorithms in a manner that resists various side-channel and reverse-engineering attacks.
 
@@ -26,12 +35,22 @@ To integrate the White Box Cryptography framework into your Xcode project using 
 1. Add the following to your `Podfile`:
 
 ```ruby
-pod 'WhiteBoxCryptography', '~> 1.0.0'
+pod 'WhiteBoxCryptography', '~> 1.0.5'
 ```
 
 2. Run `pod install` in the terminal.
 
 3. Open the `.xcworkspace` file in Xcode.
+
+### Using Carthage
+
+To integrate White Box Cryptography with Carthage, add the following to your `Cartfile`:
+
+```
+github "DrDijkstra/WhiteboxCryptography" ~> 1.0.0
+```
+
+Then run `carthage update` to build the framework.
 
 ## Usage
 
@@ -93,3 +112,4 @@ We welcome contributions to improve the framework! To contribute:
 For questions or support, please contact us at:  
 Email: deysanjay121@gmail.com  
 GitHub: [https://github.com/DrDijkstra/WhiteboxCryptography](https://github.com/DrDijkstra/WhiteboxCryptography)
+
