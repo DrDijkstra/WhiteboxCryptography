@@ -6,35 +6,43 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ContentView: View {
     @StateObject var viewModel: ContentViewModel
     
-    // Detects when the user taps anywhere on the screen to dismiss the keyboard
     @FocusState private var isInputFocused: Bool
     
+ 
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             Spacer()
             
             // Title and description
             Text("White Box Cryptography Sample")
                 .font(.largeTitle)
                 .bold()
-                .padding(.bottom, 20)
+                .foregroundColor(.white)
             
             Text("Enter some text to encrypt and decrypt")
                 .font(.subheadline)
-                .padding(.bottom, 10)
+                .foregroundColor(.white)
             
             // Text input field
             TextField("Enter text here", text: $viewModel.inputText)
-                .padding()
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(width: 300)
-                .focused($isInputFocused) // Bind to focus state
-            
-            Spacer()
+                .frame(height: 44)  // Set the height of the TextField
+                .focused($isInputFocused)  // Bind to focus state
+                .padding([.horizontal], 8)  // Horizontal padding
+                .background(  // Apply background color
+                    RoundedRectangle(cornerRadius: 8)  // Set rounded corners for the background
+                        .fill(Color.white)  // Set the background color to white
+                        .shadow(radius: 5)  // Optional shadow for better visibility
+                )
+                .overlay(  // Add a border over the rounded corners
+                    RoundedRectangle(cornerRadius: 8)  // Rounded corners for the border
+                        .stroke(isInputFocused ? Color.green : Color.gray, lineWidth: 1)  // Change border color based on focus state
+                )
             
             // Encrypt Button
             Button(action: {
@@ -43,44 +51,57 @@ struct ContentView: View {
                 Text("Encrypt")
                     .font(.headline)
                     .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .padding(.vertical, 8)
+                    .background(Color.yellow)
                     .cornerRadius(8)
+                    .shadow(radius: 5)
             }
             
-            Spacer()
-            
             // Encrypted text view
-            Text("Encrypted Text:")
-                .font(.headline)
-                .padding(.top, 20)
-            Text(viewModel.encryptedText)
-                .font(.body)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
-                .frame(width: 300)
+            VStack(alignment: .leading) {
+                Text("Encrypted Text:")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                Text(viewModel.encryptedText)
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(8)
+                    .frame(maxWidth: .infinity)
+                    .lineLimit(nil)
+            }
             
             // Decrypted text view
-            Text("Decrypted Text:")
-                .font(.headline)
-                .padding(.top, 20)
-            Text(viewModel.decryptedText)
-                .font(.body)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
-                .frame(width: 300)
+            VStack(alignment: .leading) {
+                Text("Decrypted Text:")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                Text(viewModel.decryptedText)
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(8)
+                    .frame(maxWidth: .infinity)
+                    .lineLimit(nil)
+            }
             
             Spacer()
         }
         .padding()
         .background(LinearGradient(gradient: Gradient(colors: [.purple, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
         .edgesIgnoringSafeArea(.all)
+        .ignoresSafeArea(.keyboard)
         .simultaneousGesture(TapGesture().onEnded {
             // Dismiss keyboard when tapping outside of the TextField
             isInputFocused = false
         })
+        
     }
 }
 
