@@ -1,4 +1,4 @@
-<img src="Images/wbc.png" alt="White Box Cryptography Logo" height="200">
+<img src="Images/wbc.png" alt="White Box Cryptography Logo" height="150">
 
 # White Box Cryptography Framework
 
