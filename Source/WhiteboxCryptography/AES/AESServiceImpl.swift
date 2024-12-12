@@ -7,52 +7,46 @@
 
 import Foundation
 
-class AESServiceImpl {
-    
-//    var aes:AES128?
-//    
-//    init(key: Data) {
-//        if let config = readConfig() {
-//            let keyBytes = [UInt8](key)
-//            aes = AES128(sbox: config.sbox, inverseSbox: config.inverseSbox, rcon:  config.rcon, key: keyBytes)
-//        } else {
-//            print("Failed to read AES configuration from file.")
-//        }
-//    }
-//    
-//    // AES encryption method, converts Data to [UInt8], encrypts, and returns Data
-//    func encrypt(block: Data) -> Data? {
-//        // Convert Data to [UInt8]
-//        let byteArray = [UInt8](block)
-//        
-//        // Encrypt the byte array
-//        if let encrypted = aes?.encrypt(block: byteArray) {
-//            // Convert the encrypted [UInt8] back to Data
-//            return Data(encrypted)
-//        } else {
-//            print("Encryption failed.")
-//            return nil
-//        }
-//    }
-//    
-//    // AES decryption method, converts Data to [UInt8], decrypts, and returns Data
-//    func decrypt(block: Data) -> Data? {
-//        // Convert Data to [UInt8]
-//        let byteArray = [UInt8](block)
-//        
-//        // Decrypt the byte array
-//        if let decrypted = aes?.decrypt(block: byteArray) {
-//            // Convert the decrypted [UInt8] back to Data
-//            return Data(decrypted)
-//        } else {
-//            print("Decryption failed.")
-//            return nil
-//        }
-//    }
-//    
-//    // Function to read the character data and convert it into UInt8 arrays
-//    
+class AESServiceImpl: AESService {
 
+    private var aes128: AES128
+    private var ivBytes: [UInt8] = []
 
+    // Initialize with a key and IV as strings
+    init(key: String, iv: String) throws {
+        // Validate the key and IV lengths
+        guard key.count == 16 else {
+            throw PreconditionError.keyLength
+        }
+        guard iv.count == 16 else {
+            throw PreconditionError.ivLength
+        }
+        
+        // Convert the key and IV strings to [UInt8]
+        let keyBytes = key.utf8.map { UInt8($0) }
+        self.ivBytes = iv.utf8.map { UInt8($0) }
+        
+        // Initialize AES128 with the key
+        self.aes128 = AES128(key: keyBytes)
+    }
+
+    // Encrypt the block of data using AES128's encrypt method
+    func encrypt(block: Data) -> Data? {
+        let blockArray = [UInt8](block) // Convert Data to [UInt8]
+        
+        // Encrypt using AES128
+        let encryptedBlock = aes128.encryptData(data: blockArray, iv: ivBytes)
+        
+        return encryptedBlock.isEmpty ? nil : Data(encryptedBlock) // Return encrypted data
+    }
+
+    // Decrypt the block of data using AES128's decrypt method
+    func decrypt(block: Data) -> Data? {
+        let blockArray = [UInt8](block) // Convert Data to [UInt8]
+        
+        // Decrypt using AES128
+        let decryptedBlock = aes128.decryptData(data: blockArray, iv: ivBytes)
+        
+        return decryptedBlock.isEmpty ? nil : Data(decryptedBlock) // Return decrypted data
+    }
 }
-

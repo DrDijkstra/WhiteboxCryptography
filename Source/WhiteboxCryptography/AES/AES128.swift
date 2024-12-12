@@ -23,8 +23,6 @@ class AES128 {
             self.sbox = config.sbox
             self.inverseSbox = config.inverseSbox
             self.rcon = config.rcon
-            print("S-box: \(sbox.hexString)")  // Debugging S-box
-            print("Inverse S-box: \(inverseSbox.hexString)")  // Debugging inverse S-box
             self.roundKeys = keyExpansion(key)
             
         } else {
@@ -154,9 +152,7 @@ class AES128 {
         var expandedKey = key
         var temp: [UInt8]
         var i = AES128.Nk
-        
-        print("Initial key expansion: \(expandedKey.hexString)") // Add this line for debugging
-        
+                
         while i < AES128.Nb * (AES128.Nr + 1) {
             temp = Array(expandedKey[(i - 1) * 4..<i * 4])
             
@@ -169,13 +165,8 @@ class AES128 {
             
             i += 1
         }
-        print("Expanded keys: \(expandedKey.hexString)") // Add this line for debugging
         return expandedKey
     }
-
-
-
-
     // MARK: - Utilities
 
     private func multiply(_ x: UInt8, _ y: UInt8) -> UInt8 {
@@ -216,56 +207,103 @@ class AES128 {
         return Array(word.dropFirst() + word.prefix(1))
     }
     
-    func readConfig() -> (sbox: [UInt8], inverseSbox: [UInt8], rcon: [UInt8])? {
-        do {
-            let frameworkBundle = Bundle(for: AESServiceImpl.self)
-            
-            // Ensure the file is found in the bundle using the correct resource name and extension
-            guard let fileURL = frameworkBundle.url(forResource: "Sbox_InvSbox_Rcon", withExtension: "txt") else {
-                print("File not found")
-                return nil
-            }
-            
-            var cnt = 0
-            
-            // Read the file contents as raw data
-            let fileData = try Data(contentsOf: fileURL)
-            let cleanedData = Data(
-                fileData.enumerated().filter { (index, byte) in
-                    if byte == 0x0A && (index - cnt) % 16 == 0  {
-                        cnt += 1
-                        return false
-                    }
-                    return true
-                }.map { $0.element }
-            )
-            
-            
+    func encryptData(data: [UInt8], iv: [UInt8]) -> [UInt8] {
+        let blockSize = AES128.Nb * 4 // 16 bytes
+        var ciphertext: [UInt8] = []
+        var previousBlock = iv
 
-            var sbox: [UInt8] = []
-            var inverseSbox: [UInt8] = []
-            var rcon: [UInt8] = []
-            
-            print("fileData.count \(fileData.count) cleanedData.count \(cleanedData.count)")
-            // Start extracting the bytes from the data
-            var index = 0
-            
-            // Read S-box (assuming it's the first 256 bytes)
-            sbox = Array(cleanedData[index..<index+256])
-            index += 256
-            
-            // Read Inverse S-box (assuming it's the next 256 bytes)
-            inverseSbox = Array(cleanedData[index..<index+256])
-            index += 256
-            
-            // Read Rcon (assuming it's the next 10 bytes)
-            rcon = Array(cleanedData[index..<index+10])
-            
-            return (sbox, inverseSbox, rcon)
-            
-        } catch {
-            print("Error reading file: \(error)")
+        // Pad the data if it's not a multiple of block size
+        var dataToEncrypt = data
+        if dataToEncrypt.count % blockSize != 0 {
+            dataToEncrypt = pad(dataToEncrypt) // Padding data
+        } else {
+            // If data length is exactly a multiple of block size, pad anyway (using 0x10 as padding byte value)
+            dataToEncrypt = pad(dataToEncrypt)
+        }
+
+        for i in stride(from: 0, to: dataToEncrypt.count, by: blockSize) {
+            let block = Array(dataToEncrypt[i..<min(i + blockSize, dataToEncrypt.count)])
+            let blockToEncrypt = xorBlocks(block, previousBlock)
+            let encryptedBlock = encrypt(block: blockToEncrypt)
+            ciphertext.append(contentsOf: encryptedBlock)
+            previousBlock = encryptedBlock
+        }
+
+        return ciphertext
+    }
+
+    private func pad(_ block: [UInt8]) -> [UInt8] {
+        let paddingLength = AES128.Nb * 4 - (block.count % (AES128.Nb * 4)) // Calculate padding required for next 16-byte boundary
+        
+        // If the block is already a multiple of 16 bytes, add 16 bytes of padding (using 0x10 as padding value)
+        let actualPaddingLength = paddingLength == 0 ? AES128.Nb * 4 : paddingLength
+        let padding = [UInt8](repeating: UInt8(actualPaddingLength), count: actualPaddingLength)
+        
+        return block + padding
+    }
+
+    func decryptData(data: [UInt8], iv: [UInt8]) -> [UInt8] {
+        let blockSize = AES128.Nb * 4 // 16 bytes
+        var plaintext: [UInt8] = []
+        var previousBlock = iv
+
+        for i in stride(from: 0, to: data.count, by: blockSize) {
+            let block = Array(data[i..<min(i + blockSize, data.count)])
+            let decryptedBlock = decrypt(block: block)
+            let decryptedXorBlock = xorBlocks(decryptedBlock, previousBlock)
+            plaintext.append(contentsOf: decryptedXorBlock)
+            previousBlock = block
+        }
+
+        return unpad(plaintext) // Call unpad to remove the padding after decryption
+    }
+
+    private func unpad(_ block: [UInt8]) -> [UInt8] {
+        // Unpadding should remove the padding bytes (last byte value tells how much to remove)
+        guard let paddingValue = block.last else { return block }
+        
+        // Remove the padding based on the last byte value
+        let paddingLength = Int(paddingValue)
+        
+        // Ensure that we don't remove too much
+        return Array(block.dropLast(paddingLength))
+    }
+
+
+
+    private func xorBlocks(_ block1: [UInt8], _ block2: [UInt8]) -> [UInt8] {
+        // XOR each byte of two blocks
+        return zip(block1, block2).map { $0 ^ $1 }
+    }
+        
+    func readConfig() -> (sbox: [UInt8], inverseSbox: [UInt8], rcon: [UInt8])? {
+       
+        let frameworkBundle = Bundle(for: AESServiceImpl.self)
+        
+        // Ensure the file is found in the bundle using the correct resource name and extension
+        guard let fileURL = frameworkBundle.url(forResource: "Sbox_InvSbox_Rcon", withExtension: "txt") else {
+            print("File not found")
             return nil
         }
+        
+        guard let fileData = try? Data(contentsOf: fileURL) else {
+               print("Error: Could not read file at path \(fileURL.path)")
+               return nil
+           }
+
+       let totalSize = fileData.count
+       if totalSize < 256 + 256 + 10 {
+           print("Error: File does not contain enough data.")
+           return nil
+       }
+
+        // Extract S-box, Inverse S-box, and Rcon
+        let sbox = Array(fileData[0..<256])
+        let inverseSbox = Array(fileData[256..<512])
+        let rcon = Array(fileData[512..<522])
+        
+        return (sbox, inverseSbox, rcon)
+            
+        
     }
 }

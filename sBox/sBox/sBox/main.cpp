@@ -22,7 +22,6 @@ using namespace std;
 string customDirectory = "/Users/sanjaydey/Documents/WhiteboxCryptography/Source/WhiteboxCryptography";
 string filePath = customDirectory + "/Sbox_InvSbox_Rcon.txt";
 
-
 // Function to generate the AES S-box and its inverse
 void generateSbox(vector<int>& sbox, vector<int>& inverseSbox) {
     uint8_t p = 1, q = 1;

@@ -67,4 +67,28 @@ class AES128Tests: XCTestCase {
         // Verify that the decrypted text matches the original plaintext
         XCTAssertEqual(plaintext, decryptedText, "Decrypted text does not match the original plaintext.")
     }
+        
+    func testEncryptDecryptData() {
+        // Sample plaintext message (less than 16 bytes)
+        let plaintext: [UInt8] = Array("Helloasdfghthght".utf8) // Length 16
+        // Initialization Vector (IV) - 16 bytes (128 bits)
+        let iv: [UInt8] = Array(repeating: 0x00, count: 16) // Simple 16-byte IV (can be random)
+        
+        // Encrypt the data
+        let encryptedData = aes128.encryptData(data: plaintext, iv: iv)
+        print("Encrypted Data: \(encryptedData.asciiCharactersString)")  // For debugging
+
+        // Decrypt the encrypted data
+        let decryptedData = aes128.decryptData(data: encryptedData, iv: iv)
+        
+        // Check that the decrypted data matches the original plaintext
+        XCTAssertEqual(decryptedData, plaintext, "Decrypted data should match the original plaintext.")
+        
+        // Optionally, print the encrypted and decrypted data for manual inspection
+        print("Plaintext: \(String(bytes: plaintext, encoding: .utf8)!)")
+        print("Encrypted Data: \(encryptedData.hexString)")
+        print("Decrypted Data: \(decryptedData.hexString)")
+        print("Decrypted Data: \(String(bytes: decryptedData, encoding: .utf8)!)")
+    }
+
 }
