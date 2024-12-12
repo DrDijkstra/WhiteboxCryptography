@@ -19,7 +19,7 @@ class CryptographicServiceImpl: CryptographicService {
             return gcmEncryptDecrypt(data: data, key: key, iv: iv, operation: operation)
             
         // For algorithms that require an IV (AES-CBC, DES, TripleDES, RC2, etc.)
-        case .aes(_, .cbc), .des, .tripleDES, .rc2, .cast:
+        case .aes(_, .cbc), .aes(_, .ecb), .des, .tripleDES, .rc2, .cast:
             guard let iv = iv else {
                 print("Error: An IV is mandatory for \(algorithm) encryption algorithm.")
                 return nil
@@ -93,7 +93,7 @@ class CryptographicServiceImpl: CryptographicService {
         switch algorithm {
         case .aes(let keySize, let mode):
             switch mode {
-            case .cbc:
+            case .cbc, .ecb:
                 switch keySize {
                 case .bits128:
                     keyLength = kCCKeySizeAES128 // 16 bytes for AES-128

@@ -37,6 +37,7 @@
 				WhiteboxCryptography/Enum/AESKeySize.swift,
 				WhiteboxCryptography/Enum/AESMode.swift,
 				WhiteboxCryptography/Enum/CryptoAlgorithm.swift,
+				WhiteboxCryptography/Error/AESCoreError.swift,
 				WhiteboxCryptography/Error/PreconditionError.swift,
 				"WhiteboxCryptography/Ext/Data+Extension.swift",
 				WhiteboxCryptography/Sbox_InvSbox_Rcon.txt,

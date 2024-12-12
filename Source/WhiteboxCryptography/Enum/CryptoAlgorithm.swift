@@ -24,6 +24,8 @@ public enum CryptoAlgorithm {
                 return kCCBlockSizeAES128 // 16 bytes for AES CBC
             case .gcm:
                 return 12 // 12 bytes for AES GCM
+            default:
+                return 16
             }
         case .des:
             return kCCBlockSizeDES // 8 bytes for DES
@@ -41,7 +43,7 @@ public enum CryptoAlgorithm {
         switch self {
         case .aes(_, let mode):
             switch mode {
-            case .cbc:
+            case .cbc, .ecb:
                 return CCAlgorithm(kCCAlgorithmAES)
             case .gcm:
                 return CCAlgorithm(kCCAlgorithmAES) // AES-GCM uses the same AES algorithm
@@ -62,7 +64,7 @@ public enum CryptoAlgorithm {
         switch self {
         case .aes(_, let mode):
             switch mode {
-            case .cbc:
+            case .cbc, .ecb:
                 return CCOptions(kCCOptionPKCS7Padding)
             case .gcm:
                 return CCOptions(0) // AES-GCM does not require padding
