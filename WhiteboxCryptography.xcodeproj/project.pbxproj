@@ -29,6 +29,9 @@
 		6ADD300A2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptography" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				WhiteboxCryptography/AES/AESCore.swift,
+				WhiteboxCryptography/AES/AESService.swift,
+				WhiteboxCryptography/AES/AESServiceImpl.swift,
 				WhiteboxCryptography/Crypt/CryptographicService.swift,
 				WhiteboxCryptography/Crypt/CryptographicServiceImpl.swift,
 				WhiteboxCryptography/Enum/AESKeySize.swift,

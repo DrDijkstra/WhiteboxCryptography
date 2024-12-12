@@ -1,5 +1,5 @@
 //
-//  AES128.swift
+//  AES.swift
 //  WhiteboxCryptography
 //
 //  Created by Sanjay Dey on 2024-12-11.
@@ -8,37 +8,49 @@
 
 import Foundation
 
-class AES128 {
-    private static let Nb = 4 // Number of columns in the state (block size = 128 bits)
-    private static let Nk = 4 // Number of 32-bit words in the key (128 bits = 4 words)
-    private static let Nr = 10 // Number of rounds for AES-128
-
+class AESCore {
+    private var Nb: Int  // Number of columns (fixed at 4 for AES)
+    private var Nk: Int  // Number of 32-bit words in the key
+    private var Nr: Int  // Number of rounds
     var sbox: [UInt8] = []
     var inverseSbox: [UInt8] = []
     var rcon: [UInt8] = []
     private var roundKeys: [UInt8] = []
 
-    init( key: [UInt8]) {
+    init(key: [UInt8]) {
+        let keyType = AESKeySize(rawValue: key.count)
+        switch keyType {
+        case .bits128:  // AES-128
+            Nk = 4
+            Nr = 10
+        case .bits192:  // AES-192
+            Nk = 6
+            Nr = 12
+        case .bits256:  // AES-256
+            Nk = 8
+            Nr = 14
+        default:
+            fatalError("Invalid key size. Key must be 16, 24, or 32 bytes.")
+        }
+        
+        self.Nb = 4  // Fixed for AES
         if let config = readConfig() {
             self.sbox = config.sbox
             self.inverseSbox = config.inverseSbox
             self.rcon = config.rcon
             self.roundKeys = keyExpansion(key)
-            
         } else {
             print("Failed to read AES configuration from file.")
         }
     }
 
-    // MARK: - Public Methods
-
     func encrypt(block: [UInt8]) -> [UInt8] {
-        precondition(block.count == AES128.Nb * 4, "Block must be 16 bytes")
+        precondition(block.count == Nb * 4, "Block must be 16 bytes")
         return cipher(block: block)
     }
 
     func decrypt(block: [UInt8]) -> [UInt8] {
-        precondition(block.count == AES128.Nb * 4, "Block must be 16 bytes")
+        precondition(block.count == Nb * 4, "Block must be 16 bytes")
         return inverseCipher(block: block)
     }
 
@@ -48,7 +60,7 @@ class AES128 {
         var state = blockToState(block)
         addRoundKey(&state, round: 0)
 
-        for round in 1..<AES128.Nr {
+        for round in 1..<Nr {
             subBytes(&state)
             shiftRows(&state)
             mixColumns(&state)
@@ -57,16 +69,16 @@ class AES128 {
 
         subBytes(&state)
         shiftRows(&state)
-        addRoundKey(&state, round: AES128.Nr)
+        addRoundKey(&state, round: Nr)
 
         return stateToBlock(state)
     }
 
     private func inverseCipher(block: [UInt8]) -> [UInt8] {
         var state = blockToState(block)
-        addRoundKey(&state, round: AES128.Nr)
+        addRoundKey(&state, round: Nr)
 
-        for round in stride(from: AES128.Nr - 1, through: 1, by: -1) {
+        for round in stride(from: Nr - 1, through: 1, by: -1) {
             inverseShiftRows(&state)
             inverseSubBytes(&state)
             addRoundKey(&state, round: round)
@@ -80,11 +92,12 @@ class AES128 {
         return stateToBlock(state)
     }
 
+
     // MARK: - State Transformations
 
     private func subBytes(_ state: inout [[UInt8]]) {
         for row in 0..<4 {
-            for col in 0..<AES128.Nb {
+            for col in 0..<Nb {
                 state[row][col] = sbox[Int(state[row][col])]
             }
         }
@@ -97,7 +110,7 @@ class AES128 {
     }
 
     private func mixColumns(_ state: inout [[UInt8]]) {
-        for col in 0..<AES128.Nb {
+        for col in 0..<Nb {
             let a = state.map { $0[col] }
             state[0][col] = multiply(a[0], 2) ^ multiply(a[1], 3) ^ a[2] ^ a[3]
             state[1][col] = a[0] ^ multiply(a[1], 2) ^ multiply(a[2], 3) ^ a[3]
@@ -107,8 +120,8 @@ class AES128 {
     }
 
     private func addRoundKey(_ state: inout [[UInt8]], round: Int) {
-        let startIdx = round * AES128.Nb * 4
-        for col in 0..<AES128.Nb {
+        let startIdx = round * Nb * 4
+        for col in 0..<Nb {
             for row in 0..<4 {
                 state[row][col] ^= roundKeys[startIdx + row + 4 * col]
             }
@@ -119,7 +132,7 @@ class AES128 {
 
     private func inverseSubBytes(_ state: inout [[UInt8]]) {
         for row in 0..<4 {
-            for col in 0..<AES128.Nb {
+            for col in 0..<Nb {
                 state[row][col] = inverseSbox[Int(state[row][col])]
             }
         }
@@ -132,7 +145,7 @@ class AES128 {
     }
 
     private func inverseMixColumns(_ state: inout [[UInt8]]) {
-        for col in 0..<AES128.Nb {
+        for col in 0..<Nb {
             let a = state.map { $0[col] }
             let b = [
                 multiply(a[0], 0x0e) ^ multiply(a[1], 0x0b) ^ multiply(a[2], 0x0d) ^ multiply(a[3], 0x09),
@@ -151,16 +164,16 @@ class AES128 {
     private func keyExpansion(_ key: [UInt8]) -> [UInt8] {
         var expandedKey = key
         var temp: [UInt8]
-        var i = AES128.Nk
+        var i = Nk
                 
-        while i < AES128.Nb * (AES128.Nr + 1) {
+        while i < Nb * (Nr + 1) {
             temp = Array(expandedKey[(i - 1) * 4..<i * 4])
             
-            if i % AES128.Nk == 0 {
-                temp = xor(subWord(rotWord(temp)), [rcon[i / AES128.Nk - 1], 0, 0, 0])
+            if i % Nk == 0 {
+                temp = xor(subWord(rotWord(temp)), [rcon[i / Nk - 1], 0, 0, 0])
             }
             
-            let previousWord = Array(expandedKey[(i - AES128.Nk) * 4..<i * 4])
+            let previousWord = Array(expandedKey[(i - Nk) * 4..<i * 4])
             expandedKey.append(contentsOf: xor(previousWord, temp))
             
             i += 1
@@ -180,7 +193,7 @@ class AES128 {
     }
 
     private func blockToState(_ block: [UInt8]) -> [[UInt8]] {
-        var state = Array(repeating: Array(repeating: UInt8(0), count: AES128.Nb), count: 4)
+        var state = Array(repeating: Array(repeating: UInt8(0), count: Nb), count: 4)
         for i in 0..<block.count {
             state[i % 4][i / 4] = block[i]
         }
@@ -188,7 +201,7 @@ class AES128 {
     }
 
     private func stateToBlock(_ state: [[UInt8]]) -> [UInt8] {
-        var block = [UInt8](repeating: 0, count: AES128.Nb * 4)
+        var block = [UInt8](repeating: 0, count: Nb * 4)
         for i in 0..<block.count {
             block[i] = state[i % 4][i / 4]
         }
@@ -208,7 +221,7 @@ class AES128 {
     }
     
     func encryptData(data: [UInt8], iv: [UInt8]) -> [UInt8] {
-        let blockSize = AES128.Nb * 4 // 16 bytes
+        let blockSize = Nb * 4 // 16 bytes
         var ciphertext: [UInt8] = []
         var previousBlock = iv
 
@@ -233,17 +246,17 @@ class AES128 {
     }
 
     private func pad(_ block: [UInt8]) -> [UInt8] {
-        let paddingLength = AES128.Nb * 4 - (block.count % (AES128.Nb * 4)) // Calculate padding required for next 16-byte boundary
+        let paddingLength = Nb * 4 - (block.count % (Nb * 4)) // Calculate padding required for next 16-byte boundary
         
         // If the block is already a multiple of 16 bytes, add 16 bytes of padding (using 0x10 as padding value)
-        let actualPaddingLength = paddingLength == 0 ? AES128.Nb * 4 : paddingLength
+        let actualPaddingLength = paddingLength == 0 ? Nb * 4 : paddingLength
         let padding = [UInt8](repeating: UInt8(actualPaddingLength), count: actualPaddingLength)
         
         return block + padding
     }
 
     func decryptData(data: [UInt8], iv: [UInt8]) -> [UInt8] {
-        let blockSize = AES128.Nb * 4 // 16 bytes
+        let blockSize = Nb * 4 // 16 bytes
         var plaintext: [UInt8] = []
         var previousBlock = iv
 
