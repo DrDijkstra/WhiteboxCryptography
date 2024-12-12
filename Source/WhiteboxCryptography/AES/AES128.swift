@@ -13,9 +13,9 @@ class AES128 {
     private static let Nk = 4 // Number of 32-bit words in the key (128 bits = 4 words)
     private static let Nr = 10 // Number of rounds for AES-128
 
-    private var sbox: [UInt8] = []
-    private var inverseSbox: [UInt8] = []
-    private var rcon: [UInt8] = []
+    var sbox: [UInt8] = []
+    var inverseSbox: [UInt8] = []
+    var rcon: [UInt8] = []
     private var roundKeys: [UInt8] = []
 
     init( key: [UInt8]) {

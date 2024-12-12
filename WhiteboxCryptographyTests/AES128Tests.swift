@@ -25,6 +25,31 @@ class AES128Tests: XCTestCase {
         // Initialize AES128 with the test key
         aes128 = AES128(key: testKey)
     }
+    
+    
+
+    func testSBoxAndInverseSBox() {
+        // S-box and Inverse S-box values (replace with your actual arrays)
+        let sbox = aes128.sbox
+        let inverseSbox = aes128.inverseSbox
+
+        // Validate lengths
+        XCTAssertEqual(sbox.count, 256, "S-box should have 256 entries.")
+        XCTAssertEqual(inverseSbox.count, 256, "Inverse S-box should have 256 entries.")
+
+        // Validate S-box and Inverse S-box relationship
+        for x in 0..<256 {
+            let sboxValue = sbox[x]
+            let inverseValue = inverseSbox[Int(sboxValue)]
+            XCTAssertEqual(inverseValue, UInt8(x), "InverseSbox[Sbox[\(x)]] should be \(x), but got \(inverseValue).")
+        }
+
+        // Validate uniqueness
+        XCTAssertEqual(Set(sbox).count, 256, "S-box should have unique values.")
+        XCTAssertEqual(Set(inverseSbox).count, 256, "Inverse S-box should have unique values.")
+    }
+    
+
 
     func testEncryptionAndDecryption() {
         // Sample plaintext (16 bytes block)
