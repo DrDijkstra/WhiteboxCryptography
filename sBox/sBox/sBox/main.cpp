@@ -19,6 +19,10 @@ using namespace std;
 
 #define ROTL8(x, shift) ((uint8_t)((x) << (shift)) | ((x) >> (8 - (shift))))
 
+string customDirectory = "/Users/sanjaydey/Documents/WhiteboxCryptography/Source/WhiteboxCryptography";
+string filePath = customDirectory + "/Sbox_InvSbox_Rcon.txt";
+
+
 // Function to generate the AES S-box and its inverse
 void generateSbox(vector<int>& sbox, vector<int>& inverseSbox) {
     uint8_t p = 1, q = 1;
@@ -74,44 +78,60 @@ void createDirectoryIfNeeded(const string& dirPath) {
     }
 }
 
-// Function to write the S-box, Inverse S-box, and rcon to a file as characters
-void writeToFileAsChars(const vector<int>& sbox, const vector<int>& inverseSbox, const vector<int>& rcon, const string& directory) {
-    string filePath = directory + "/Sbox_InvSbox_Rcon.txt";
-    ofstream outFile(filePath);
+// Function to write the S-box, Inverse S-box, and rcon to a file as unsigned char
+void writeToFileAsUnsignedChars(const vector<int>& sbox, const vector<int>& inverseSbox, const vector<int>& rcon, const string& directory) {
+    ofstream outFile(filePath, ios::binary);
     if (!outFile.is_open()) {
         cerr << "Error: Could not open file for writing: " << filePath << endl;
         return;
     }
 
+    // Helper lambda to write a vector of integers as unsigned char
+    auto writeVectorAsUnsignedChars = [&outFile](const vector<int>& data) {
+        for (int value : data) {
+            unsigned char byte = static_cast<unsigned char>(value);
+            outFile.write(reinterpret_cast<const char*>(&byte), sizeof(byte));
+        }
+    };
+
     // Write S-box
-    //outFile << "S-box:" << endl;
-    for (int i = 0; i < 256; ++i) {
-        outFile << hex << uppercase << setw(2) << setfill('0') << sbox[i];
-        if ((i + 1) % 16 == 0) outFile << endl;  // Line break every 16 values
-        else outFile << " ";  // Space between values
-    }
+    writeVectorAsUnsignedChars(sbox);
 
     // Write Inverse S-box
-    //outFile << "\nInverse S-box:" << endl;
-    for (int i = 0; i < 256; ++i) {
-        outFile << hex << uppercase << setw(2) << setfill('0') << inverseSbox[i];
-        if ((i + 1) % 16 == 0) outFile << endl;
-        else outFile << " ";
-    }
+    writeVectorAsUnsignedChars(inverseSbox);
 
     // Write Rcon
-    //outFile << "\nRcon:" << endl;
-    for (int i = 0; i < 10; ++i) {
-        outFile << hex << uppercase << setw(2) << setfill('0') << rcon[i];
-        if ((i + 1) % 16 == 0) outFile << endl;
-        else outFile << " ";
-    }
+    writeVectorAsUnsignedChars(rcon);
 
     outFile.close();
-    cout << "S-box, Inverse S-box, and Rcon written to: " << filePath << endl;
+    cout << "S-box, Inverse S-box, and Rcon written as unsigned chars to: " << filePath << endl;
 }
 
+// Function to read the S-box, Inverse S-box, and Rcon from a file and display as hex
+bool readFromFile(const string& filePath, vector<int>& sbox, vector<int>& inverseSbox, vector<int>& rcon) {
+    ifstream inFile(filePath, ios::binary);
+    if (!inFile.is_open()) {
+        cerr << "Error: Could not open file for reading: " << filePath << endl;
+        return false;
+    }
 
+    // Read the file content
+    vector<unsigned char> data((istreambuf_iterator<char>(inFile)), istreambuf_iterator<char>());
+    inFile.close();
+
+    // Validate file size
+    if (data.size() < 256 + 256 + 10) {
+        cerr << "Error: File does not contain enough data." << endl;
+        return false;
+    }
+
+    // Extract S-box, Inverse S-box, and Rcon
+    sbox.assign(data.begin(), data.begin() + 256);
+    inverseSbox.assign(data.begin() + 256, data.begin() + 512);
+    rcon.assign(data.begin() + 512, data.begin() + 522);
+
+    return true;
+}
 
 void trimString(string& str) {
     str.erase(remove_if(str.begin(), str.end(), [](unsigned char c) {
@@ -137,60 +157,6 @@ void validateData(const vector<int>& vec, const string& label, int expectedSize)
     cout << label << " successfully validated." << endl;
 }
 
-void readFromFileAsChars(vector<int>& sbox, vector<int>& inverseSbox, vector<int>& rcon, const string& filePath) {
-    ifstream inFile(filePath);
-    if (!inFile.is_open()) {
-        cerr << "Error opening file: " << filePath << endl;
-        return;
-    }
-
-    string line;
-    int index = 0;
-
-    // Read S-box
-    while (getline(inFile, line)) {
-        if (line.find("S-box:") != string::npos) break;  // Skip to S-box section
-    }
-    index = 0;
-    while (getline(inFile, line) && index < 256) {
-        istringstream iss(line);
-        string value;
-        while (iss >> value && index < 256) {
-            sbox[index++] = stoi(value, nullptr, 16);  // Convert hex to int
-        }
-    }
-
-    // Read Inverse S-box
-    while (getline(inFile, line)) {
-        if (line.find("Inverse S-box:") != string::npos) break;
-    }
-    index = 0;
-    while (getline(inFile, line) && index < 256) {
-        istringstream iss(line);
-        string value;
-        while (iss >> value && index < 256) {
-            inverseSbox[index++] = stoi(value, nullptr, 16);
-        }
-    }
-
-    // Read Rcon
-    while (getline(inFile, line)) {
-        if (line.find("Rcon:") != string::npos) break;
-    }
-    index = 0;
-    while (getline(inFile, line) && index < 10) {
-        istringstream iss(line);
-        string value;
-        while (iss >> value && index < 10) {
-            rcon[index++] = stoi(value, nullptr, 16);
-        }
-    }
-
-    inFile.close();
-    cout << "S-box, Inverse S-box, and Rcon read successfully from file: " << filePath << endl;
-}
-
-
 void compareVectors(const vector<int>& original, const vector<int>& read, const string& label) {
     if (original.size() != read.size()) {
         cerr << "Error: " << label << " size mismatch!" << endl;
@@ -207,7 +173,6 @@ void compareVectors(const vector<int>& original, const vector<int>& read, const 
     }
     cout << label << " matches perfectly!" << endl;
 }
-
 
 // Function to test if S-box and Inverse S-box are correctly generated
 void testSboxAndInverseSbox(const vector<int>& sbox, const vector<int>& inverseSbox) {
@@ -251,8 +216,6 @@ int main() {
     vector<int> sbox(256), inverseSbox(256), rcon(10);
     vector<int> sboxFromFile(256), inverseSboxFromFile(256), rconFromFile(10);
 
-    string customDirectory = "/Users/sanjaydey/Documents/WhiteboxCryptography/Source/WhiteboxCryptography";
-
     try {
         generateSbox(sbox, inverseSbox);
         generateRcon(rcon);
@@ -261,28 +224,30 @@ int main() {
         logVector(inverseSbox, "Generated Inverse S-box", 256);
         logVector(rcon, "Generated Rcon", 10);
 
-        writeToFileAsChars(sbox, inverseSbox, rcon, customDirectory);
+        writeToFileAsUnsignedChars(sbox, inverseSbox, rcon, customDirectory);
+       
 
-        string filePath = customDirectory + "/Sbox_InvSbox_Rcon.txt";
-        readFromFileAsChars(sboxFromFile, inverseSboxFromFile, rconFromFile, filePath);
+        if (readFromFile(filePath, sboxFromFile, inverseSboxFromFile, rconFromFile)) {
+            validateData(sboxFromFile, "S-box", 256);
+            validateData(inverseSboxFromFile, "Inverse S-box", 256);
+            validateData(rconFromFile, "Rcon", 10);
+    
+            compareVectors(sbox, sboxFromFile, "S-box");
+            compareVectors(inverseSbox, inverseSboxFromFile, "Inverse S-box");
+            compareVectors(rcon, rconFromFile, "Rcon");
+    
+            testSboxAndInverseSbox(sboxFromFile, inverseSboxFromFile);
+    
+            printSbox(sboxFromFile);
+            printInverseSbox(inverseSboxFromFile);
+            printRcon(rconFromFile);
+        }
+       
 
-        validateData(sboxFromFile, "S-box", 256);
-        validateData(inverseSboxFromFile, "Inverse S-box", 256);
-        validateData(rconFromFile, "Rcon", 10);
 
-        compareVectors(sbox, sboxFromFile, "S-box");
-        compareVectors(inverseSbox, inverseSboxFromFile, "Inverse S-box");
-        compareVectors(rcon, rconFromFile, "Rcon");
-
-        testSboxAndInverseSbox(sboxFromFile, inverseSboxFromFile);
-
-        printSbox(sboxFromFile);
-        printInverseSbox(inverseSboxFromFile);
-        printRcon(rconFromFile);
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << endl;
     }
 
     return 0;
 }
-
