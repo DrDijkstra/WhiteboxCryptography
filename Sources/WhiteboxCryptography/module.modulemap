@@ -1,0 +1,5 @@
+
+module WhiteboxCryptographySDK {
+  umbrella header "WhiteboxCryptography.h"  // Ensure this matches the exact path and name
+  export *
+}

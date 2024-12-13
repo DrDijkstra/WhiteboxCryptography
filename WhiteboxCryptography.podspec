@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-  spec.name         = "WhiteboxCryptographySDK"
+  spec.name         = "WhiteboxCryptography"
   spec.version      = "1.0.6"
   spec.summary      = "A cryptographic SDK using white-box cryptography techniques."
   spec.description  = <<-DESC
@@ -16,7 +16,8 @@ Pod::Spec.new do |spec|
   spec.watchos.deployment_target = "8.7"
   spec.tvos.deployment_target = "15.6"
   spec.visionos.deployment_target = "1.2"
-  spec.module_map       = 'Sources/WhiteboxCryptography/module.modulemap'
+  spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'NO' }
+
 
 
   spec.source = { :git => 'https://github.com/DrDijkstra/WhiteboxCryptography.git', :tag => spec.version.to_s }

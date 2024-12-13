@@ -1,5 +1,0 @@
-
-module WhiteboxCryptography {
-  header "WhiteboxCryptography.h" // Include the appropriate header file
-  export *
-}
