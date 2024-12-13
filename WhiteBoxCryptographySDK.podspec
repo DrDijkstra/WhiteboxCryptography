@@ -21,7 +21,7 @@ Pod::Spec.new do |spec|
 
   spec.source = { :git => 'https://github.com/DrDijkstra/WhiteboxCryptography.git', :tag => spec.version.to_s }
   spec.readme = "https://github.com/DrDijkstra/WhiteboxCryptography/blob/develop/README.md"
-  spec.source_files  = "Source/**/*.swift"
+  spec.source_files  = "Sources/**/*.swift"
   spec.swift_versions  = "5.0"
 
 end
