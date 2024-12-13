@@ -7,7 +7,7 @@
 
 
 import XCTest
-
+import WhiteboxCryptography
 
 class AESCoreTests: XCTestCase {
 
@@ -124,38 +124,5 @@ class AESCoreTests: XCTestCase {
         XCTAssertEqual(plaintext, decryptedData, "Decrypted data does not match the original plaintext for key size \(key.count * 8) bits and mode \(mode)")
     }
     
-//    func testAESEncryptionDecryptionLargeData() throws {
-//        // Generate 5 MB of random data
-//        let largeData = try generateRandomData(size: 5 * 1024 * 1024)  // 5 MB
-//        
-//        let key: [UInt8] = [
-//            0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe,
-//            0x2b, 0x73, 0xae, 0xf0, 0x85, 0x7d, 0x77, 0x81,
-//            0x1f, 0x35, 0x61, 0x1d, 0x72, 0x10, 0x84, 0x47,
-//            0x9b, 0x6d, 0x7a, 0x96, 0x1e, 0x18, 0x7a, 0x6e
-//        ]
-//        let ivString = "1234567890abcdef"
-//        let iv: [UInt8] = ivFromString(ivString)
-//
-//        try aesCore.update(key: key, mode: .ecb)
-//
-//        // Encrypt the large data
-//        let encryptedData = try aesCore.encryptData(data: largeData, iv: iv)
-//        XCTAssertNotEqual(largeData, encryptedData, "Encryption failed, data is the same after encryption")
-//
-//        // Decrypt the ciphertext
-//        let decryptedData = try aesCore.decryptData(data: encryptedData, iv: iv)
-//
-//        // Verify the decrypted data matches the original large data
-//        XCTAssertEqual(largeData, decryptedData, "Decrypted data does not match the original data for large data (5 MB)")
-//    }
-//    
-//    private func generateRandomData(size: Int) throws -> [UInt8] {
-//        var data = [UInt8](repeating: 0, count: size)
-//        let _ = data.withUnsafeMutableBytes { bytes in
-//            SecRandomCopyBytes(kSecRandomDefault, size, bytes.baseAddress!)
-//        }
-//        return data
-//    }
 
 }

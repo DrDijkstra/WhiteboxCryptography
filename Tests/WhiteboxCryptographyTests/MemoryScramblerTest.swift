@@ -6,6 +6,7 @@
 //
 import XCTest
 import CryptoKit
+import WhiteboxCryptography
 
 final class MemoryScramblerTests: XCTestCase {
 

@@ -14,9 +14,16 @@ let package = Package(
     targets: [
         .target(
             name: "WhiteboxCryptography",
-            dependencies: []),
+            dependencies: [],
+            resources: [
+                .process("Resources/Sbox_InvSbox_Rcon.txt")
+            ]
+        ),
         .testTarget(
-            name: "WhiteboxCryptographyTests",
-            dependencies: ["WhiteboxCryptography"]),
+                    name: "WhiteboxCryptographyTests",
+                    dependencies: ["WhiteboxCryptography"]
+                ),
     ]
 )
+
+

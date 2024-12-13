@@ -10,11 +10,11 @@ import CommonCrypto
 import CryptoKit
 
 // MARK: - Cryptographic Service Implementation
-class CryptographicServiceImpl: CryptographicService {
+public class CryptographicServiceImpl: CryptographicService {
     
-    private var aesService: AESService
+    public var aesService: AESService
     
-    init(aesService: AESService = AESServiceImpl()) {
+    public init(aesService: AESService = AESServiceImpl()) {
         self.aesService = aesService
     }
 
@@ -87,17 +87,17 @@ class CryptographicServiceImpl: CryptographicService {
     }
 
     // MARK: - AES Encryption with IV (CBC or GCM)
-    func encrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) throws -> Data? {
+    public func encrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) throws -> Data? {
         return try crypt(data: data, key: key, iv: iv, operation: kCCEncrypt, algorithm: algorithm)
     }
 
     // MARK: - AES Decryption with IV (CBC or GCM)
-    func decrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) throws -> Data? {
+    public func decrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) throws -> Data? {
         return try crypt(data: data, key: key, iv: iv, operation: kCCDecrypt, algorithm: algorithm)
     }
 
     // MARK: - Generate Random Key for Specified Algorithm
-    func generateRandomKey(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
+    public func generateRandomKey(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
         let keyLength: Int
 
         switch algorithm {
@@ -117,7 +117,7 @@ class CryptographicServiceImpl: CryptographicService {
     }
 
     // MARK: - Generate Random IV
-    func generateRandomIV(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
+    public func generateRandomIV(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
         return generateRandomData(ofLength: algorithm.ivSize)
     }
 
@@ -142,7 +142,7 @@ class CryptographicServiceImpl: CryptographicService {
     }
 
     // MARK: - Key Derivation using PBKDF2
-    func deriveKey(fromPassword password: String, salt: Data, iterations: Int = 10000) -> Data? {
+    public func deriveKey(fromPassword password: String, salt: Data, iterations: Int = 10000) -> Data? {
         let keyLength = kCCKeySizeAES256
         var derivedKey = Data(repeating: 0, count: keyLength)
 
@@ -170,7 +170,7 @@ class CryptographicServiceImpl: CryptographicService {
     }
 
     // MARK: - HMAC for Integrity Checking
-    func hmac(data: Data, key: Data) -> Data? {
+    public func hmac(data: Data, key: Data) -> Data? {
         var result = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
 
         key.withUnsafeBytes { keyPointer in

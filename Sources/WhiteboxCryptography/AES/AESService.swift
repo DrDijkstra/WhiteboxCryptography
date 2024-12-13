@@ -9,7 +9,7 @@
 import Foundation
 
 // Protocol for AES encryption and decryption functionality
-protocol AESService {    
+public protocol AESService {    
     func encrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data?
     func decrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data? 
 }

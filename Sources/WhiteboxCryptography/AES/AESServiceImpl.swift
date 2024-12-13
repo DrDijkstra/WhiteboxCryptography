@@ -7,15 +7,15 @@
 
 import Foundation
 
-class AESServiceImpl: AESService {
+public class AESServiceImpl: AESService {
     
     private var aes: AESCore
     
-    init() {
+    public init() {
         aes = AESCore()
     }
     
-    func encrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data? {
+    public func encrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data? {
         let blockBytes = [UInt8](block)
         let keyBytes = [UInt8](key)
         let ivBytes = iv != nil ? [UInt8](iv!) : []
@@ -27,7 +27,7 @@ class AESServiceImpl: AESService {
         return Data(encryptedBytes)
     }
 
-    func decrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data? {
+    public func decrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data? {
         let blockBytes = [UInt8](block)
         let keyBytes = [UInt8](key)
         let ivBytes = iv != nil ? [UInt8](iv!) : []

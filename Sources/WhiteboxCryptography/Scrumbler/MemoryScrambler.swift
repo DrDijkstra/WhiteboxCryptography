@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol MemoryScrambler {
+public protocol MemoryScrambler {
     func scramble(data: Data, withKey key: Data) -> Data
     func descramble(data: Data, withKey key: Data) -> Data
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class AESCore {
+public class AESCore {
     private var Nb: Int = 4 // Number of columns (fixed at 4 for AES)
     private var Nk: Int = 4 // Number of 32-bit words in the key
     private var Nr: Int = 10 // Number of rounds
@@ -18,16 +18,18 @@ class AESCore {
     private var roundKeys: [UInt8] = []
     var mode: AESMode = .ecb
 
-    init() {
+    public init() {
         if let config = readConfig() {
             self.sbox = config.sbox
             self.inverseSbox = config.inverseSbox
             self.rcon = config.rcon
+        }else{
+            fatalError("File not found")
         }
     }
     
     /// Updates the encryption keys and mode.
-    func update(key: [UInt8], mode: AESMode) throws {
+    public func update(key: [UInt8], mode: AESMode) throws {
         // Determine key size and number of rounds
         let keySize = key.count
         guard let keyType = AESKeySize(rawValue: keySize) else {
@@ -52,7 +54,7 @@ class AESCore {
         self.mode = mode
     }
 
-    func encryptData(data: [UInt8], iv: [UInt8] = []) throws -> [UInt8] {
+    public func encryptData(data: [UInt8], iv: [UInt8] = []) throws -> [UInt8] {
         switch mode {
         case .ecb:
             return try ecbEncrypt(data: data)
@@ -63,7 +65,7 @@ class AESCore {
         }
     }
 
-    func decryptData(data: [UInt8], iv: [UInt8] = []) throws -> [UInt8]? {
+    public func decryptData(data: [UInt8], iv: [UInt8] = []) throws -> [UInt8]? {
         switch mode {
         case .ecb:
             return try ecbDecrypt(data: data)
@@ -373,13 +375,28 @@ class AESCore {
     
     func readConfig() -> (sbox: [UInt8], inverseSbox: [UInt8], rcon: [UInt8])? {
        
-        let frameworkBundle = Bundle(for: AESServiceImpl.self)
+        let bundle: Bundle
+
+        // Check if we're using SPM
+        #if SWIFT_PACKAGE
+            // For SPM (Swift Package Manager)
+            bundle = Bundle.module
+        #else
+            // For CocoaPods
+            bundle = Bundle(for: type(of: self))
+        #endif
+        
+        
+        guard let fileURL = bundle.url(forResource: "Sbox_InvSbox_Rcon", withExtension: "txt") else {
+                print("File not found in the bundle")
+                return nil
+            }
         
         // Ensure the file is found in the bundle using the correct resource name and extension
-        guard let fileURL = frameworkBundle.url(forResource: "Sbox_InvSbox_Rcon", withExtension: "txt") else {
-            print("File not found")
-            return nil
-        }
+//        guard let fileURL = frameworkBundle.url(forResource: "Sbox_InvSbox_Rcon", withExtension: "txt") else {
+//            print("File not found")
+//            return nil
+//        }
         
         guard let fileData = try? Data(contentsOf: fileURL) else {
                print("Error: Could not read file at path \(fileURL.path)")

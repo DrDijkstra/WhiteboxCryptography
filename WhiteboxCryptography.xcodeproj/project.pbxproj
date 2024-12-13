@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6A5BC4502D08B70D0058551F /* WhiteboxCryptography.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A5BC4452D08B70D0058551F /* WhiteboxCryptography.framework */; };
+		6A7DED6E2D0CDF7B00CA70F6 /* WhiteboxCryptographyTests-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A7DED6D2D0CDF5500CA70F6 /* WhiteboxCryptographyTests-Bridging-Header.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,46 +24,12 @@
 /* Begin PBXFileReference section */
 		6A5BC4452D08B70D0058551F /* WhiteboxCryptography.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WhiteboxCryptography.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A5BC44F2D08B70D0058551F /* WhiteboxCryptographyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhiteboxCryptographyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A7DED6D2D0CDF5500CA70F6 /* WhiteboxCryptographyTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WhiteboxCryptographyTests-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6ADD300A2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				WhiteboxCryptography/AES/AESCore.swift,
-				WhiteboxCryptography/AES/AESService.swift,
-				WhiteboxCryptography/AES/AESServiceImpl.swift,
-				WhiteboxCryptography/Crypt/CryptographicService.swift,
-				WhiteboxCryptography/Crypt/CryptographicServiceImpl.swift,
-				WhiteboxCryptography/Enum/AESKeySize.swift,
-				WhiteboxCryptography/Enum/AESMode.swift,
-				WhiteboxCryptography/Enum/CryptoAlgorithm.swift,
-				WhiteboxCryptography/Error/CryptographicError.swift,
-				"WhiteboxCryptography/Ext/Data+Extension.swift",
-				WhiteboxCryptography/Sbox_InvSbox_Rcon.txt,
-				WhiteboxCryptography/Scrumbler/MemoryScrambler.swift,
-				WhiteboxCryptography/Scrumbler/MemoryScramblerImpl.swift,
-				WhiteboxCryptography/WhiteboxCryptography.docc,
-				WhiteboxCryptography/WhiteboxCryptography.h,
-				WhiteboxCryptography/WhiteboxCryptographySDK.swift,
-			);
-			publicHeaders = (
-				WhiteboxCryptography/WhiteboxCryptography.h,
-			);
-			target = 6A5BC4442D08B70D0058551F /* WhiteboxCryptography */;
-		};
-		6ADD300B2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				WhiteboxCryptography/WhiteboxCryptography.docc,
-			);
-			target = 6A5BC44E2D08B70D0058551F /* WhiteboxCryptographyTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WhiteboxCryptographyTests; sourceTree = "<group>"; };
-		6ADD2FE82D09469000F21A7D /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6ADD300A2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 6ADD300B2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+		6A7DED002D0CDBFB00CA70F6 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Sources; sourceTree = "<group>"; };
+		6A7DED612D0CDE6D00CA70F6 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,8 +54,9 @@
 		6A5BC43B2D08B70D0058551F = {
 			isa = PBXGroup;
 			children = (
-				6ADD2FE82D09469000F21A7D /* Source */,
-				6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */,
+				6A7DED6D2D0CDF5500CA70F6 /* WhiteboxCryptographyTests-Bridging-Header.h */,
+				6A7DED002D0CDBFB00CA70F6 /* Sources */,
+				6A7DED612D0CDE6D00CA70F6 /* Tests */,
 				6A5BC4462D08B70D0058551F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -109,6 +77,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A7DED6E2D0CDF7B00CA70F6 /* WhiteboxCryptographyTests-Bridging-Header.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +96,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6A7DED002D0CDBFB00CA70F6 /* Sources */,
 			);
 			name = WhiteboxCryptography;
 			packageProductDependencies = (
@@ -149,8 +121,8 @@
 				6A5BC4522D08B70D0058551F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */,
-				6ADD2FE82D09469000F21A7D /* Source */,
+				6A7DED002D0CDBFB00CA70F6 /* Sources */,
+				6A7DED612D0CDE6D00CA70F6 /* Tests */,
 			);
 			name = WhiteboxCryptographyTests;
 			packageProductDependencies = (
@@ -174,6 +146,7 @@
 					};
 					6A5BC44E2D08B70D0058551F = {
 						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
@@ -247,7 +220,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 267PCB3VPV;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -278,6 +251,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				TVOS_DEPLOYMENT_TARGET = 15.6;
@@ -293,7 +267,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = 267PCB3VPV;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -324,6 +298,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				TVOS_DEPLOYMENT_TARGET = 15.6;
@@ -456,6 +431,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 267PCB3VPV;
@@ -468,6 +444,8 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WhiteboxCryptographyTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 2.1;
@@ -478,6 +456,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 267PCB3VPV;
@@ -490,6 +469,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WhiteboxCryptographyTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 2.1;

@@ -7,6 +7,7 @@
 
 import XCTest
 import CommonCrypto
+import WhiteboxCryptography
 
 final class CryptographicServiceTests: XCTestCase {
 
