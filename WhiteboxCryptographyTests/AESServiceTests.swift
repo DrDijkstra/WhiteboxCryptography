@@ -49,14 +49,15 @@ class AESServiceImplTests: XCTestCase {
     private func performTest(keySize: Int, mode: AESMode) throws {
         let key = generateRandomBytes(count: keySize)
         let block = generateRandomBytes(count: 16) // AES block size is 16 bytes
-        let iv = mode == .cbc ? generateRandomBytes(count: 16) : nil
+        let iv = (mode == .cbc || mode == .ecb) ? generateRandomBytes(count: 16) : generateRandomBytes(count: 12)
+
 
         // Encrypt
-        let encryptedData = try aesService.encrypt(block: Data(block), key: Data(key), iv: iv != nil ? Data(iv!) : nil, mode: mode)
+        let encryptedData = try aesService.encrypt(block: Data(block), key: Data(key), iv: Data(iv), mode: mode)
         XCTAssertNotNil(encryptedData, "Encryption failed")
 
         // Decrypt
-        let decryptedData = try aesService.decrypt(block: encryptedData!, key: Data(key), iv: iv != nil ? Data(iv!) : nil, mode: mode)
+        let decryptedData = try aesService.decrypt(block: encryptedData!, key: Data(key), iv:  Data(iv), mode: mode)
         XCTAssertNotNil(decryptedData, "Decryption failed")
 
         // Validate
