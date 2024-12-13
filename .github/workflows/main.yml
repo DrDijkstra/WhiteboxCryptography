@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - develop
     tags:
       - "*"
 
@@ -18,8 +18,8 @@ jobs:
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: |
-          pod trunk push YourLibraryName.podspec
-
+          pod trunk push WhiteBoxCryptographySDK.podspec
+          
       - name: Upload to Carthage
         run: |
-          carthage build --archive
+          carthage build --use-xcframeworks --archive

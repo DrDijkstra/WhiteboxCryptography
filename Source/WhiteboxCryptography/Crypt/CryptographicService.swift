@@ -10,8 +10,8 @@ import CommonCrypto
 
 public protocol CryptographicService {
     
-    func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) -> Data?
-    func decrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) -> Data?
+    func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm)throws -> Data?
+    func decrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) throws -> Data?
     func generateRandomIV(forAlgorithm algorithm: CryptoAlgorithm) -> Data?
     func deriveKey(fromPassword password: String, salt: Data, iterations: Int) -> Data?
     func hmac(data: Data, key: Data) -> Data?

@@ -21,14 +21,14 @@ public class WhiteboxCryptographySDK {
     }
     
     // MARK: - Encrypt Data
-    public func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) -> Data? {
+    public func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) throws -> Data? {
         let scrambledData = memoryScrambler.scramble(data: data, withKey: memoryKey)
-        return cryptographicService.encrypt(data: scrambledData, withKey: key, iv: iv, algorithm: algorithm)
+        return try cryptographicService.encrypt(data: scrambledData, withKey: key, iv: iv, algorithm: algorithm)
     }
     
     // MARK: - Decrypt Data
-    public func decrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm) -> Data? {
-        guard let decryptedData = cryptographicService.decrypt(data: data, withKey: key, iv: iv, algorithm: algorithm) else {
+    public func decrypt(data: Data, withKey key: Data, iv: Data? = nil, algorithm: CryptoAlgorithm)throws -> Data? {
+        guard let decryptedData = try cryptographicService.decrypt(data: data, withKey: key, iv: iv, algorithm: algorithm) else {
             return nil
         }
         return memoryScrambler.descramble(data: decryptedData, withKey: memoryKey)
