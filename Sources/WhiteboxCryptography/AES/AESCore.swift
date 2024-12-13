@@ -9,9 +9,9 @@
 import Foundation
 
 public class AESCore {
-    private var Nb: Int = 4 // Number of columns (fixed at 4 for AES)
-    private var Nk: Int = 4 // Number of 32-bit words in the key
-    private var Nr: Int = 10 // Number of rounds
+    private var Nb: Int = 4
+    private var Nk: Int = 4
+    private var Nr: Int = 10
     var sbox: [UInt8] = []
     var inverseSbox: [UInt8] = []
     var rcon: [UInt8] = []
