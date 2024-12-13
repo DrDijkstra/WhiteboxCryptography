@@ -20,7 +20,7 @@ jobs:
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: |
-          pod trunk push WhiteboxCryptographySDK.podspec --verbose --allow-warnings
+          pod trunk push WhiteboxCryptography.podspec --verbose --allow-warnings
 
       # Upload to Carthage
       - name: Upload to Carthage
