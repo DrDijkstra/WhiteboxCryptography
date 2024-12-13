@@ -15,11 +15,12 @@ jobs:
       # Checkout the repository
       - uses: actions/checkout@v2
 
-      # Set up Xcode (using the official GitHub action)
+      # Set up Xcode (manually select the correct version)
       - name: Set up Xcode
-        uses: actions/setup-xcode@v3
-        with:
-          xcode-version: '15.x'  # Ensure this matches the version that supports all simulators (including xrOS)
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcode-select --print-path
+          xcodebuild -version
 
       # Install all simulators (iPhone, iPad, Apple Watch, Apple TV, and xrOS)
       - name: Install all simulators
@@ -27,16 +28,15 @@ jobs:
           # List available runtimes to see if the ones you need are installed
           xcrun simctl list runtimes
 
-          # Install simulators for iPhone, iPad, Apple Watch, Apple TV, and xrOS
-          # First, make sure the correct Xcode version is selected
-          sudo xcode-select -s /Applications/Xcode_15.x.app/Contents/Developer
-
           # Install iOS, iPadOS, watchOS, tvOS, and xrOS simulators
-          # You may need to add specific versions based on your needs
-          xcodebuild -runFirstLaunch  # Ensure Xcode is fully initialized
+          # Make sure Xcode is selected
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-          # Download all available simulators
-          sudo xcode-select --switch /Applications/Xcode_15.x.app/Contents/Developer
+          # Run first launch to initialize Xcode
+          xcodebuild -runFirstLaunch
+
+          # Install simulators (adjust versions based on your needs)
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           xcodebuild -installRunTime -runtime "com.apple.CoreSimulator.SimRuntime.iOS-15-5"
           xcodebuild -installRunTime -runtime "com.apple.CoreSimulator.SimRuntime.tvOS-15-5"
           xcodebuild -installRunTime -runtime "com.apple.CoreSimulator.SimRuntime.watchOS-8-5"
