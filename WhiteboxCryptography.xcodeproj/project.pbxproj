@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,7 +26,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6ADD300A2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptography" target */ = {
+		6ADD300A2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				WhiteboxCryptography/AES/AESCore.swift,
@@ -51,7 +51,7 @@
 			);
 			target = 6A5BC4442D08B70D0058551F /* WhiteboxCryptography */;
 		};
-		6ADD300B2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptographyTests" target */ = {
+		6ADD300B2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				WhiteboxCryptography/WhiteboxCryptography.docc,
@@ -61,20 +61,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WhiteboxCryptographyTests;
-			sourceTree = "<group>";
-		};
-		6ADD2FE82D09469000F21A7D /* Source */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				6ADD300A2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptography" target */,
-				6ADD300B2D09469000F21A7D /* Exceptions for "Source" folder in "WhiteboxCryptographyTests" target */,
-			);
-			path = Source;
-			sourceTree = "<group>";
-		};
+		6A5BC4532D08B70D0058551F /* WhiteboxCryptographyTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WhiteboxCryptographyTests; sourceTree = "<group>"; };
+		6ADD2FE82D09469000F21A7D /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6ADD300A2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 6ADD300B2D09469000F21A7D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +178,7 @@
 				};
 			};
 			buildConfigurationList = 6A5BC43F2D08B70D0058551F /* Build configuration list for PBXProject "WhiteboxCryptography" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -198,7 +187,6 @@
 			);
 			mainGroup = 6A5BC43B2D08B70D0058551F;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 6A5BC4462D08B70D0058551F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

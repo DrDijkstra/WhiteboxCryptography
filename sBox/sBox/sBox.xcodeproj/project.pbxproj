@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,11 +23,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6ADD318D2D09F92700F21A7D /* sBox */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = sBox;
-			sourceTree = "<group>";
-		};
+		6ADD318D2D09F92700F21A7D /* sBox */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = sBox; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +93,7 @@
 				};
 			};
 			buildConfigurationList = 6ADD31862D09F92700F21A7D /* Build configuration list for PBXProject "sBox" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -105,7 +102,6 @@
 			);
 			mainGroup = 6ADD31822D09F92700F21A7D;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 6ADD318C2D09F92700F21A7D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

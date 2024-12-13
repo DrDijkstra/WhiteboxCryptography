@@ -8,7 +8,7 @@
 import Foundation
 import CommonCrypto
 
-public enum CryptoAlgorithm {
+public enum CryptoAlgorithm:Hashable {
     case aes(keySize: AESKeySize, mode: AESMode, processingType: AESProcressingType)
     case des
     case tripleDES
