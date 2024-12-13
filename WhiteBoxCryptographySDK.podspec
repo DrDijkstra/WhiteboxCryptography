@@ -15,7 +15,7 @@ Pod::Spec.new do |spec|
   spec.osx.deployment_target = "14.0"
   spec.watchos.deployment_target = "8.7"
   spec.tvos.deployment_target = "15.6"
-  spec.visionos.deployment_target = "1.3"
+  spec.visionos.deployment_target = "1.2"
 
   spec.source = { :git => 'https://github.com/DrDijkstra/WhiteboxCryptography.git', :tag => spec.version.to_s }
   spec.readme = "https://github.com/DrDijkstra/WhiteboxCryptography/blob/develop/README.md"
