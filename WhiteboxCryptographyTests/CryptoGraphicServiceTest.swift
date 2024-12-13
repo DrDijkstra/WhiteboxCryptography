@@ -35,13 +35,13 @@ final class CryptographicServiceTests: XCTestCase {
             let iv = cryptographicService.generateRandomIV(forAlgorithm: .aes(keySize: .bits256, mode: .gcm))  // 12 bytes IV for AES-GCM
 
             // Encryption
-            guard let encryptedData = cryptographicService.encrypt(data: testData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
+            guard let encryptedData = try? cryptographicService.encrypt(data: testData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
                 XCTFail("Encryption failed for data size: \(size)")
                 return
             }
 
             // Decryption
-            guard let decryptedData = cryptographicService.decrypt(data: encryptedData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
+            guard let decryptedData = try? cryptographicService.decrypt(data: encryptedData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
                 XCTFail("Decryption failed for data size: \(size)")
                 return
             }
@@ -51,35 +51,6 @@ final class CryptographicServiceTests: XCTestCase {
         }
     }
 
-    // MARK: - GCM Encryption/Decryption Tests for Array of Data Sizes
-    
-    func testAESGCMEncryptionDecryptionForDifferentDataSizes() {
-        // Generate a list of different data sizes (e.g., 1KB, 10KB, 100KB, 1MB, 10MB)
-        let dataSizes: [Int] = [1024, 10 * 1024, 100 * 1024, 1024 * 1024, 10 * 1024 * 1024]
-
-        // Iterate over each data size
-        for size in dataSizes {
-            let testData = Data(repeating: 0x01, count: size)  // Generate data of specified size
-            let key = Data("asesdhkssyhbnjushshgtyu78765sgty".utf8) // Ensure this is 32 bytes for AES256
-            let iv = cryptographicService.generateRandomIV(forAlgorithm: .aes(keySize: .bits256, mode: .gcm))!
-
-            // GCM Encryption
-            guard let encryptedData = cryptographicService.encryptGCM(data: testData, withKey: key, iv: iv) else {
-                XCTFail("GCM Encryption failed for data size: \(size)")
-                return
-            }
-
-            // GCM Decryption
-            guard let decryptedData = cryptographicService.decryptGCM(data: encryptedData, withKey: key, iv: iv) else {
-                XCTFail("GCM Decryption failed for data size: \(size)")
-                return
-            }
-
-            // Check if the decrypted data matches the original data
-            XCTAssertEqual(decryptedData, testData, "Decrypted data does not match the original data for size: \(size)")
-        }
-    }
-    
     // MARK: - HMAC Tests for Array of Data Sizes
     
     func testHMACForDifferentDataSizes() {
@@ -120,6 +91,35 @@ final class CryptographicServiceTests: XCTestCase {
 
             // Check if derived key has correct length
             XCTAssertEqual(derivedKey.count, kCCKeySizeAES256, "Incorrect key length for data size: \(size)")
+        }
+    }
+
+    // MARK: - AES GCM Encryption/Decryption Tests
+    
+    func testAESGCMEncryptionDecryptionForDifferentDataSizes() {
+        // Generate a list of different data sizes (e.g., 1KB, 10KB, 100KB, 1MB, 10MB)
+        let dataSizes: [Int] = [1024, 10 * 1024, 100 * 1024, 1024 * 1024, 10 * 1024 * 1024]
+
+        // Iterate over each data size
+        for size in dataSizes {
+            let testData = Data(repeating: 0x01, count: size)  // Generate data of specified size
+            let key = Data("asesdhkssyhbnjushshgtyu78765sgty".utf8) // Ensure this is 32 bytes for AES256
+            let iv = cryptographicService.generateRandomIV(forAlgorithm: .aes(keySize: .bits256, mode: .gcm))!
+
+            // GCM Encryption
+            guard let encryptedData = try? cryptographicService.encrypt(data: testData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
+                XCTFail("GCM Encryption failed for data size: \(size)")
+                return
+            }
+
+            // GCM Decryption
+            guard let decryptedData = try? cryptographicService.decrypt(data: encryptedData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm)) else {
+                XCTFail("GCM Decryption failed for data size: \(size)")
+                return
+            }
+
+            // Check if the decrypted data matches the original data
+            XCTAssertEqual(decryptedData, testData, "Decrypted data does not match the original data for size: \(size)")
         }
     }
 }

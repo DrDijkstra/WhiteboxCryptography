@@ -8,12 +8,14 @@
 
 import Foundation
 
-enum AESCoreError: Error {
+enum CryptographicError: Error {
     case invalidKeySize
     case invalidBlockSize
     case encryptionError
     case decryptionError
     case invalidIVSize
+    case mandatoryIV
+    case cryptOperationFailed(status: Int)
     case authenticationFailed
     case paddingError
     case initializationError

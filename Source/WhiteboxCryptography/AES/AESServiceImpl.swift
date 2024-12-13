@@ -34,7 +34,7 @@ class AESServiceImpl: AESService {
 
         try aes.update(key: keyBytes, mode: mode)
         guard let decryptedBytes = try aes.decryptData(data: blockBytes, iv: ivBytes) else{
-            throw AESCoreError.decryptionError
+            throw CryptographicError.decryptionError
         }
 
         return Data(decryptedBytes)

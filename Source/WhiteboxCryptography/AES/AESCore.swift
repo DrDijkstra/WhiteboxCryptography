@@ -31,7 +31,7 @@ class AESCore {
         // Determine key size and number of rounds
         let keySize = key.count
         guard let keyType = AESKeySize(rawValue: keySize) else {
-            throw AESCoreError.invalidKeySize
+            throw CryptographicError.invalidKeySize
         }
 
         switch keyType {
@@ -76,14 +76,14 @@ class AESCore {
     
     private func encrypt(block: [UInt8]) throws -> [UInt8] {
         guard block.count == Nb * 4 else {
-            throw AESCoreError.invalidBlockSize
+            throw CryptographicError.invalidBlockSize
         }
         return cipher(block: block)
     }
 
     private func decrypt(block: [UInt8]) throws -> [UInt8] {
         guard block.count == Nb * 4 else {
-            throw AESCoreError.invalidBlockSize
+            throw CryptographicError.invalidBlockSize
         }
         return inverseCipher(block: block)
     }
@@ -142,7 +142,7 @@ class AESCore {
 
     private func cbcDecrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
         guard iv.count == 16 else {
-            throw AESCoreError.invalidIVSize
+            throw CryptographicError.invalidIVSize
         }
         let blockSize = Nb * 4
         var plaintext: [UInt8] = []
@@ -162,7 +162,7 @@ class AESCore {
 
     private func gcmEncrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
         guard iv.count == 12 else {
-            throw AESCoreError.invalidIVSize
+            throw CryptographicError.invalidIVSize
         }
 
         let blockSize = Nb * 4
@@ -203,7 +203,7 @@ class AESCore {
 
     private func gcmDecrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
         guard iv.count == 12 else {
-            throw AESCoreError.invalidIVSize
+            throw CryptographicError.invalidIVSize
         }
 
         let blockSize = Nb * 4
@@ -220,7 +220,7 @@ class AESCore {
 
         // Validate the checksum
         if computedTag != receivedTag {
-            throw AESCoreError.authenticationFailed
+            throw CryptographicError.authenticationFailed
         }
 
         // Counter block setup: The IV is used as the base for the counter.
@@ -269,12 +269,12 @@ class AESCore {
 
     private func unpad(_ data: [UInt8]) throws -> [UInt8] {
         guard let paddingLength = data.last else {
-            throw AESCoreError.paddingError
+            throw CryptographicError.paddingError
         }
         
         // Check that the padding length is valid
         if paddingLength > 16 || paddingLength == 0 {
-            throw AESCoreError.paddingError
+            throw CryptographicError.paddingError
         }
         
         // Remove the padding by dropping the last `paddingLength` bytes
