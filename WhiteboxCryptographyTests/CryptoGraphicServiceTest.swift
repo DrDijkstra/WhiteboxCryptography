@@ -104,16 +104,18 @@ final class CryptographicServiceTests: XCTestCase {
         for size in dataSizes {
             let testData = Data(repeating: 0x01, count: size)  // Generate data of specified size
             let key = Data("asesdhkssyhbnjushshgtyu78765sgty".utf8) // Ensure this is 32 bytes for AES256
-            let iv = cryptographicService.generateRandomIV(forAlgorithm: .aes(keySize: .bits256, mode: .gcm, processingType: .faster))!
+            
+            let algo = CryptoAlgorithm.aes(keySize: .bits256, mode: .cbc, processingType: .faster)
+            let iv = cryptographicService.generateRandomIV(forAlgorithm: algo)!
 
             // GCM Encryption
-            guard let encryptedData = try? cryptographicService.encrypt(data: testData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm, processingType: .faster)) else {
+            guard let encryptedData = try? cryptographicService.encrypt(data: testData, withKey: key, iv: iv, algorithm: algo) else {
                 XCTFail("GCM Encryption failed for data size: \(size)")
                 return
             }
 
             // GCM Decryption
-            guard let decryptedData = try? cryptographicService.decrypt(data: encryptedData, withKey: key, iv: iv, algorithm: .aes(keySize: .bits256, mode: .gcm, processingType: .faster)) else {
+            guard let decryptedData = try? cryptographicService.decrypt(data: encryptedData, withKey: key, iv: iv, algorithm: algo) else {
                 XCTFail("GCM Decryption failed for data size: \(size)")
                 return
             }
