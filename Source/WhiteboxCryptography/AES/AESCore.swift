@@ -9,44 +9,47 @@
 import Foundation
 
 class AESCore {
-    private var Nb: Int  // Number of columns (fixed at 4 for AES)
-    private var Nk: Int  // Number of 32-bit words in the key
-    private var Nr: Int  // Number of rounds
+    private var Nb: Int = 4 // Number of columns (fixed at 4 for AES)
+    private var Nk: Int = 4 // Number of 32-bit words in the key
+    private var Nr: Int = 10 // Number of rounds
     var sbox: [UInt8] = []
     var inverseSbox: [UInt8] = []
     var rcon: [UInt8] = []
     private var roundKeys: [UInt8] = []
-    var mode: AESMode
+    var mode: AESMode = .ecb
 
-    init(key: [UInt8], mode: AESMode = .ecb) throws {
+    init() {
+        if let config = readConfig() {
+            self.sbox = config.sbox
+            self.inverseSbox = config.inverseSbox
+            self.rcon = config.rcon
+        }
+    }
+    
+    /// Updates the encryption keys and mode.
+    func update(key: [UInt8], mode: AESMode) throws {
+        // Determine key size and number of rounds
         let keySize = key.count
         guard let keyType = AESKeySize(rawValue: keySize) else {
             throw AESCoreError.invalidKeySize
         }
 
         switch keyType {
-        case .bits128:  // AES-128
-            Nk = 4
-            Nr = 10
-        case .bits192:  // AES-192
-            Nk = 6
-            Nr = 12
-        case .bits256:  // AES-256
-            Nk = 8
-            Nr = 14
+        case .bits128:
+            self.Nk = 4
+            self.Nr = 10
+        case .bits192:
+            self.Nk = 6
+            self.Nr = 12
+        case .bits256:
+            self.Nk = 8
+            self.Nr = 14
         }
+        
 
-        self.Nb = 4  // Fixed for AES
+        // Perform key expansion to generate round keys
+        self.roundKeys = keyExpansion(key)
         self.mode = mode
-
-        if let config = readConfig() {
-            self.sbox = config.sbox
-            self.inverseSbox = config.inverseSbox
-            self.rcon = config.rcon
-            self.roundKeys = keyExpansion(key)
-        } else {
-            throw AESCoreError.encryptionError
-        }
     }
 
     func encryptData(data: [UInt8], iv: [UInt8] = []) throws -> [UInt8] {
@@ -90,7 +93,7 @@ class AESCore {
         var ciphertext: [UInt8] = []
         
         // Pad data to a multiple of block size
-        let paddedData = try pad(data)
+        let paddedData = pad(data)
         
         // Encrypt each block
         for i in stride(from: 0, to: paddedData.count, by: blockSize) {
@@ -118,15 +121,12 @@ class AESCore {
     }
 
     private func cbcEncrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
-        let blockSize = Nb * 4
+        let blockSize = Nb * 4  // Typically 16 bytes for AES (128 bits).
         var ciphertext: [UInt8] = []
         var previousBlock = iv
 
-        // Padding
         var dataToEncrypt = data
-        if dataToEncrypt.count % blockSize != 0 {
-            dataToEncrypt = try pad(dataToEncrypt)
-        }
+        dataToEncrypt = pad(dataToEncrypt)
 
         for i in stride(from: 0, to: dataToEncrypt.count, by: blockSize) {
             let block = Array(dataToEncrypt[i..<min(i + blockSize, dataToEncrypt.count)])
@@ -139,7 +139,11 @@ class AESCore {
         return ciphertext
     }
 
+
     private func cbcDecrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
+        guard iv.count == 16 else {
+            throw AESCoreError.invalidIVSize
+        }
         let blockSize = Nb * 4
         var plaintext: [UInt8] = []
         var previousBlock = iv
@@ -152,6 +156,7 @@ class AESCore {
             previousBlock = block
         }
 
+        // Remove padding after decryption
         return try unpad(plaintext)
     }
 
@@ -242,18 +247,36 @@ class AESCore {
         return zip(block1, block2).map { $0 ^ $1 }
     }
 
-    private func pad(_ data: [UInt8]) throws -> [UInt8] {
-        let blockSize = Nb * 4
+    private func pad(_ data: [UInt8]) -> [UInt8] {
+        let blockSize = 16
         let paddingLength = blockSize - (data.count % blockSize)
-        return data + Array(repeating: UInt8(paddingLength), count: paddingLength)
+        
+        // If padding length is 0 (i.e., data is a multiple of block size), add a full block of padding
+        let paddingValue: UInt8 = paddingLength == 0 ? UInt8(blockSize) : UInt8(paddingLength)
+        
+        // Add the padding bytes
+        let padding = [UInt8](repeating: paddingValue, count: paddingLength == 0 ? blockSize : paddingLength)
+        
+        return data + padding
     }
+
+
 
     private func unpad(_ data: [UInt8]) throws -> [UInt8] {
         guard let paddingLength = data.last else {
             throw AESCoreError.paddingError
         }
-        return Array(data.prefix(data.count - Int(paddingLength)))
+        
+        // Check that the padding length is valid
+        if paddingLength > 16 || paddingLength == 0 {
+            throw AESCoreError.paddingError
+        }
+        
+        // Remove the padding by dropping the last `paddingLength` bytes
+        let unpaddedData = data.dropLast(Int(paddingLength))
+        return Array(unpaddedData)
     }
+
 
     private func incrementCounter(_ counter: [UInt8]) -> [UInt8] {
         var newCounter = counter

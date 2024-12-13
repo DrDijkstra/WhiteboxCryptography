@@ -8,17 +8,35 @@
 import Foundation
 
 class AESServiceImpl: AESService {
-    func encrypt(block: Data, iv: Data) -> Data? {
-        return Data()
-    }
-    
-    func decrypt(block: Data, iv: Data) -> Data? {
-        return Data()
-    }
     
     private var aes: AESCore
     
-    init(aes: AESCore) throws {
-        self.aes = aes
+    init() {
+        aes = AESCore()
+    }
+    
+    func encrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data? {
+        let blockBytes = [UInt8](block)
+        let keyBytes = [UInt8](key)
+        let ivBytes = iv != nil ? [UInt8](iv!) : []
+
+        try aes.update(key: keyBytes, mode: mode)
+
+        let encryptedBytes = try aes.encryptData(data: blockBytes, iv: ivBytes)
+
+        return Data(encryptedBytes)
+    }
+
+    func decrypt(block: Data, key: Data, iv: Data?, mode: AESMode) throws -> Data? {
+        let blockBytes = [UInt8](block)
+        let keyBytes = [UInt8](key)
+        let ivBytes = iv != nil ? [UInt8](iv!) : []
+
+        try aes.update(key: keyBytes, mode: mode)
+        guard let decryptedBytes = try aes.decryptData(data: blockBytes, iv: ivBytes) else{
+            throw AESCoreError.decryptionError
+        }
+
+        return Data(decryptedBytes)
     }
 }

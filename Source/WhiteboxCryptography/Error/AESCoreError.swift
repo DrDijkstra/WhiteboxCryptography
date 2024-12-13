@@ -12,7 +12,9 @@ enum AESCoreError: Error {
     case invalidKeySize
     case invalidBlockSize
     case encryptionError
+    case decryptionError
     case invalidIVSize
     case authenticationFailed
     case paddingError
+    case initializationError
 }
