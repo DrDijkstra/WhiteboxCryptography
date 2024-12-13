@@ -9,7 +9,7 @@ import Foundation
 import CommonCrypto
 
 public enum CryptoAlgorithm {
-    case aes(keySize: AESKeySize, mode: AESMode)
+    case aes(keySize: AESKeySize, mode: AESMode, processingType: AESProcressingType)
     case des
     case tripleDES
     case cast
@@ -18,7 +18,7 @@ public enum CryptoAlgorithm {
     // Size of the initialization vector (IV) required for the algorithm
     var ivSize: Int {
         switch self {
-        case .aes(_, let mode):
+        case .aes(_, let mode, _):
             switch mode {
             case .cbc:
                 return kCCBlockSizeAES128 // 16 bytes for AES CBC
@@ -41,7 +41,7 @@ public enum CryptoAlgorithm {
     // Convert CryptoAlgorithm to CommonCrypto CCAlgorithm
     var ccAlgorithm: CCAlgorithm {
         switch self {
-        case .aes(_, let mode):
+        case .aes(_, let mode, _):
             switch mode {
             case .cbc, .ecb:
                 return CCAlgorithm(kCCAlgorithmAES)
@@ -62,7 +62,7 @@ public enum CryptoAlgorithm {
     // Convert CryptoAlgorithm to the corresponding CCOptions
     var ccOptions: CCOptions {
         switch self {
-        case .aes(_, let mode):
+        case .aes(_, let mode, _):
             switch mode {
             case .cbc, .ecb:
                 return CCOptions(kCCOptionPKCS7Padding)

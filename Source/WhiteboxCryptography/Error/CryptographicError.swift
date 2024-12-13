@@ -17,6 +17,7 @@ enum CryptographicError: Error {
     case mandatoryIV
     case cryptOperationFailed(status: Int)
     case authenticationFailed
+    case ecbNotAvailableInFasterProcessingType
     case paddingError
     case initializationError
 }

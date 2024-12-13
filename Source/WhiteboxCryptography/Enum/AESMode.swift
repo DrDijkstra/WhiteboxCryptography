@@ -9,3 +9,8 @@
 public enum AESMode {
     case ecb, cbc, gcm
 }
+
+public enum AESProcressingType {
+    case faster
+    case regular
+}

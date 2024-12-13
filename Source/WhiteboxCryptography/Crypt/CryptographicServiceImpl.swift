@@ -21,41 +21,58 @@ class CryptographicServiceImpl: CryptographicService {
     // MARK: - Cryptographic operation (encryption or decryption)
     private func crypt(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data? {
             switch algorithm {
-            case .aes(_, let mode):
-                return try aesServiceCrypt(data: data, key: key, iv: iv, operation: operation, mode: mode)
-            default:
-                guard let iv = iv else {
-                    throw CryptographicError.mandatoryIV
-                }
-                
-                // Proceed with cryptographic operation (encryption or decryption)
-                var result = [UInt8](repeating: 0, count: data.count + kCCBlockSizeAES128)
-                var resultLength = 0
-
-                let ivPointer = iv.withUnsafeBytes { $0.baseAddress } ?? nil
-
-                let status = key.withUnsafeBytes { keyPointer in
-                    data.withUnsafeBytes { dataPointer in
-                        CCCrypt(
-                            CCOperation(operation),
-                            algorithm.ccAlgorithm,
-                            algorithm.ccOptions,
-                            keyPointer.baseAddress, key.count,
-                            ivPointer,
-                            dataPointer.baseAddress, data.count,
-                            &result, result.count,
-                            &resultLength
-                        )
+            case .aes(_, let mode, let processingType):
+                switch processingType {
+                case .faster:
+                    switch mode {
+                    case .cbc:
+                        return try doNativeEncryption(data: data, key: key, iv: iv, operation: operation, algorithm: algorithm)
+                    case .gcm:
+                        return gcmEncryptDecrypt(data: data, key: key, iv: iv, operation: operation)
+                    case .ecb:
+                        throw CryptographicError.ecbNotAvailableInFasterProcessingType
                     }
+                case .regular:
+                    return try aesServiceCrypt(data: data, key: key, iv: iv, operation: operation, mode: mode)
                 }
-
-                guard status == kCCSuccess else {
-                    throw CryptographicError.cryptOperationFailed(status: Int(status))
-                }
-
-                return Data(result.prefix(resultLength))
+               
+            default:
+                return try doNativeEncryption(data: data, key: key, iv: iv, operation: operation, algorithm: algorithm)
             }
         }
+    
+    func doNativeEncryption(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data{
+        guard let iv = iv else {
+            throw CryptographicError.mandatoryIV
+        }
+        
+        // Proceed with cryptographic operation (encryption or decryption)
+        var result = [UInt8](repeating: 0, count: data.count + kCCBlockSizeAES128)
+        var resultLength = 0
+
+        let ivPointer = iv.withUnsafeBytes { $0.baseAddress } ?? nil
+
+        let status = key.withUnsafeBytes { keyPointer in
+            data.withUnsafeBytes { dataPointer in
+                CCCrypt(
+                    CCOperation(operation),
+                    algorithm.ccAlgorithm,
+                    algorithm.ccOptions,
+                    keyPointer.baseAddress, key.count,
+                    ivPointer,
+                    dataPointer.baseAddress, data.count,
+                    &result, result.count,
+                    &resultLength
+                )
+            }
+        }
+
+        guard status == kCCSuccess else {
+            throw CryptographicError.cryptOperationFailed(status: Int(status))
+        }
+
+        return Data(result.prefix(resultLength))
+    }
 
     // MARK: - AES encryption/decryption
     private func aesServiceCrypt(data: Data, key: Data, iv: Data?, operation: Int, mode: AESMode) throws -> Data? {
@@ -84,7 +101,7 @@ class CryptographicServiceImpl: CryptographicService {
         let keyLength: Int
 
         switch algorithm {
-        case .aes(let keySize, _):
+        case .aes(let keySize, _, _):
             keyLength = aesKeyLength(for: keySize)
         case .des:
             keyLength = 8
@@ -169,4 +186,70 @@ class CryptographicServiceImpl: CryptographicService {
 
         return Data(result)
     }
+    
+    // MARK: - AES GCM Encryption/Decryption (Authenticated Encryption) - Using CryptoKit
+    private func gcmEncryptDecrypt(data: Data, key: Data, iv: Data?, operation: Int) -> Data? {
+        guard let iv = iv, iv.count == 12 else {
+            print("Invalid IV size for AES-GCM. It must be 12 bytes.")
+            return nil
+        }
+
+        switch operation {
+        case kCCEncrypt:
+            return encryptGCM(data: data, withKey: key, iv: iv)
+        case kCCDecrypt:
+            return decryptGCM(data: data, withKey: key, iv: iv)
+        default:
+            fatalError("Invalid operation for GCM.")
+        }
+    }
+    
+    func encryptGCM(data: Data, withKey key: Data, iv: Data) -> Data? {
+        guard key.count == 32 else {
+            print("Invalid key size: \(key.count). Key must be 32 bytes for AES256.")
+            return nil
+        }
+        guard iv.count == 12 else {
+            print("Invalid IV size: \(iv.count). IV must be 12 bytes for AES-GCM.")
+            return nil
+        }
+        
+        
+        let symmetricKey = SymmetricKey(data: key)
+
+        do {
+            let sealedBox = try AES.GCM.seal(data, using: symmetricKey, nonce: AES.GCM.Nonce(data: iv))
+            return sealedBox.combined
+        } catch {
+            print("GCM encryption failed: \(error.localizedDescription)")
+            return nil
+        }
+
+    }
+    
+    func decryptGCM(data: Data, withKey key: Data, iv: Data) -> Data? {
+        guard key.count == 32 else {
+            print("Invalid key size: \(key.count). Key must be 32 bytes for AES256.")
+            return nil
+        }
+        guard iv.count == 12 else {
+            print("Invalid IV size: \(iv.count). IV must be 12 bytes for AES-GCM.")
+            return nil
+        }
+        
+        let symmetricKey = SymmetricKey(data: key)
+        
+        do {
+            let sealedBox = try AES.GCM.SealedBox(combined: data)
+            let decryptedData = try AES.GCM.open(sealedBox, using: symmetricKey, authenticating: Data())
+            return decryptedData
+        } catch {
+            print("GCM decryption failed: \(error.localizedDescription)")
+            return nil
+        }
+        
+    }
+
+
+
 }
