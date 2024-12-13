@@ -13,11 +13,11 @@ jobs:
 
     steps:
       # Checkout the repository
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
-      # Set up Xcode with a specific version (e.g., Xcode 15.x)
+      # Set up Xcode (using the official GitHub action)
       - name: Set up Xcode
-        uses: macos-actions/setup-xcode@v2
+        uses: actions/setup-xcode@v3
         with:
           xcode-version: '15.x'  # Ensure this matches the version that supports all simulators (including xrOS)
 
