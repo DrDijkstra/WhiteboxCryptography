@@ -254,13 +254,18 @@ class AESCore {
         // If padding length is 0 (i.e., data is a multiple of block size), add a full block of padding
         let paddingValue: UInt8 = paddingLength == 0 ? UInt8(blockSize) : UInt8(paddingLength)
         
-        // Add the padding bytes
-        let padding = [UInt8](repeating: paddingValue, count: paddingLength == 0 ? blockSize : paddingLength)
+        // Create random padding for all bytes except the last one
+        var padding = [UInt8]()
+        
+        for _ in 0..<paddingLength-1 {
+            padding.append(UInt8.random(in: 0...255)) // Random padding
+        }
+        
+        // Add the padding length in the last byte
+        padding.append(paddingValue)
         
         return data + padding
     }
-
-
 
     private func unpad(_ data: [UInt8]) throws -> [UInt8] {
         guard let paddingLength = data.last else {
