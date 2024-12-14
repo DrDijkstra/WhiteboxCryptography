@@ -20,4 +20,5 @@ enum CryptographicError: Error {
     case ecbNotAvailableInFasterProcessingType
     case paddingError
     case initializationError
+    case fasterGCMisNotAvailableForKeySize192And128
 }

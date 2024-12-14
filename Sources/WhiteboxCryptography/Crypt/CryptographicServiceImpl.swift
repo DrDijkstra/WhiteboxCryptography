@@ -21,14 +21,20 @@ public class CryptographicServiceImpl: CryptographicService {
     // MARK: - Cryptographic operation (encryption or decryption)
     private func crypt(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data? {
             switch algorithm {
-            case .aes(_, let mode, let processingType):
+            case .aes(let keysize, let mode, let processingType):
                 switch processingType {
                 case .faster:
                     switch mode {
                     case .cbc:
                         return try doNativeEncryption(data: data, key: key, iv: iv, operation: operation, algorithm: algorithm)
                     case .gcm:
-                        return gcmEncryptDecrypt(data: data, key: key, iv: iv, operation: operation)
+                        switch  AESKeySize(rawValue: keysize / 8) {
+                        case .bits256:
+                            return gcmEncryptDecrypt(data: data, key: key, iv: iv, operation: operation)
+                        default:
+                            throw CryptographicError.fasterGCMisNotAvailableForKeySize192And128
+                        }
+                       
                     case .ecb:
                         throw CryptographicError.ecbNotAvailableInFasterProcessingType
                     }
@@ -98,22 +104,25 @@ public class CryptographicServiceImpl: CryptographicService {
 
     // MARK: - Generate Random Key for Specified Algorithm
     public func generateRandomKey(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
-        let keyLength: Int
+        var keySizeInBits: Int?
 
-        switch algorithm {
-        case .aes(let keySize, _, _):
-            keyLength = aesKeyLength(for: keySize)
-        case .des:
-            keyLength = 8
-        case .tripleDES:
-            keyLength = 24
-        case .rc2:
-            keyLength = 16
-        case .cast:
-            keyLength = 16
+        for validSize in algorithm.validKeySizes {
+            if case .specific(let keySize) = validSize {
+                keySizeInBits = keySize
+                break
+            } else if case .range(let min, let max) = validSize {
+                keySizeInBits = Int.random(in: min...max)
+                break
+            }
         }
 
-        return generateRandomData(ofLength: keyLength)
+        guard let keySize = keySizeInBits else {
+            return nil
+        }
+
+        let keySizeInBytes = keySize / 8
+
+        return generateRandomData(ofLength: keySizeInBytes)
     }
 
     // MARK: - Generate Random IV
@@ -127,18 +136,6 @@ public class CryptographicServiceImpl: CryptographicService {
             SecRandomCopyBytes(kSecRandomDefault, length, bytes.baseAddress!)
         }
         return result == errSecSuccess ? data : nil
-    }
-
-    // MARK: - AES Key Length Calculation
-    private func aesKeyLength(for size: AESKeySize) -> Int {
-        switch size {
-        case .bits128:
-            return kCCKeySizeAES128
-        case .bits192:
-            return kCCKeySizeAES192
-        case .bits256:
-            return kCCKeySizeAES256
-        }
     }
 
     // MARK: - Key Derivation using PBKDF2
