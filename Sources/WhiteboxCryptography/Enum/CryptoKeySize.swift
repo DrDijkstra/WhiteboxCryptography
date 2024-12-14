@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum CryptoKeySize: Hashable {
+public enum CryptoKeySize: Hashable , Equatable{
     // Specific sizes
     case specific(Int)
     
@@ -34,4 +34,17 @@ public enum CryptoKeySize: Hashable {
             return min / 8  // Assuming range minimum is the key size, convert to bytes
         }
     }
+    
+    public static func == (lhs: CryptoKeySize, rhs: CryptoKeySize) -> Bool {
+            switch (lhs, rhs) {
+            case (.specific(let lhsSize), .specific(let rhsSize)):
+                return lhsSize == rhsSize
+            case (.range(let lhsMin, let lhsMax), .range(let rhsMin, let rhsMax)):
+                return lhsMin == rhsMin && lhsMax == rhsMax
+            default:
+                return false
+            }
+        }
+    
+    
 }

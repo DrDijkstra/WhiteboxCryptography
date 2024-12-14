@@ -8,8 +8,9 @@
 import Foundation
 import CommonCrypto
 
-public enum CryptoAlgorithm: Hashable, Equatable {
-    case aes(keySize: Int, mode: AESMode, processingType: ProcressingType)
+public enum CryptoAlgorithm: Hashable, Equatable{
+    
+    case aes(keySize: Int, mode: AESMode, processingType: ProcressingType) 
     case des(keySize: Int, processingType: ProcressingType)
     case tripleDES(keySize: Int, processingType: ProcressingType)
     case cast(keySize: Int, processingType: ProcressingType)
@@ -44,6 +45,15 @@ public enum CryptoAlgorithm: Hashable, Equatable {
             return processingType
         case .rc2(_, let processingType):
             return processingType
+        }
+    }
+    
+    public var aesMode: AESMode? {
+        switch self {
+        case .aes(_, let mode,_):
+            return mode
+        default:
+            return nil
         }
     }
 
@@ -162,20 +172,21 @@ public enum CryptoAlgorithm: Hashable, Equatable {
     // Equatable Conformance: Compare two CryptoAlgorithm instances
     public static func == (lhs: CryptoAlgorithm, rhs: CryptoAlgorithm) -> Bool {
         switch (lhs, rhs) {
-        case (.aes(let lhsKeySize, let lhsMode, let lhsProcessingType), .aes(let rhsKeySize, let rhsMode, let rhsProcessingType)):
-            return lhsKeySize == rhsKeySize && lhsMode == rhsMode && lhsProcessingType == rhsProcessingType
-        case (.des(let lhsKeySize, let lhsProcessingType), .des(let rhsKeySize, let rhsProcessingType)):
-            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
-        case (.tripleDES(let lhsKeySize, let lhsProcessingType), .tripleDES(let rhsKeySize, let rhsProcessingType)):
-            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
-        case (.cast(let lhsKeySize, let lhsProcessingType), .cast(let rhsKeySize, let rhsProcessingType)):
-            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
-        case (.rc2(let lhsKeySize, let lhsProcessingType), .rc2(let rhsKeySize, let rhsProcessingType)):
-            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
+        case (.aes, .aes):
+            return true
+        case (.des, .des):
+            return true
+        case (.tripleDES, .tripleDES):
+            return true
+        case (.cast, .cast):
+            return true
+        case (.rc2, .rc2):
+            return true
         default:
             return false
         }
     }
+
     
     func validateIVSize( iv: Data?) throws {
         guard let iv = iv else {
