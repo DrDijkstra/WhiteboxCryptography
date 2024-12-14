@@ -151,6 +151,22 @@ class WhiteboxCryptographySDKTests: XCTestCase {
         }
     }
     
+    func testCASTRegular() {
+        let algorithm = CryptoAlgorithm.cast(keySize: 40)
+        let keySizes = [40] // Key sizes for RC2
+        let ivSize = 8 //
+        let originalData = "Hello, CAST!".data(using: .utf8)!
+
+        
+        for keySize in keySizes {
+            let key = Data(repeating: 0x06, count: keySize / 8)
+            let iv = Data(repeating: 0x07, count: ivSize)
+            let algorithm = CryptoAlgorithm.cast(keySize: keySize)
+            testAlgorithm(originalData: originalData, algorithm: algorithm, key: key, iv: iv)
+        }
+    }
+
+    
     // Test all algorithms together
     func testAllCombinations() {
         // AES CBC mode tests for both processing types
