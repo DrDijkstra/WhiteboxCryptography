@@ -9,11 +9,9 @@
 import Foundation
 
 enum CryptographicError: Error {
-    case invalidKeySize
     case invalidBlockSize
     case encryptionError
     case decryptionError
-    case invalidIVSize
     case mandatoryIV
     case cryptOperationFailed(status: Int)
     case authenticationFailed
@@ -21,4 +19,8 @@ enum CryptographicError: Error {
     case paddingError
     case initializationError
     case fasterGCMisNotAvailableForKeySize192And128
+    case invalidKeySizeForTripleDES
+    case invalidIVSizeForTripleDES
+    case invalidIVSize(expected: Int, actual: Int)
+    case invalidKeySize(String)
 }

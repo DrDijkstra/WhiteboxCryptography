@@ -33,7 +33,7 @@ public class AESCore {
         // Determine key size and number of rounds
         let keySize = key.count
         guard let keyType = AESKeySize(rawValue: keySize) else {
-            throw CryptographicError.invalidKeySize
+            throw CryptographicError.invalidKeySize("Invalid key size")
         }
 
         switch keyType {
@@ -144,7 +144,7 @@ public class AESCore {
 
     private func cbcDecrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
         guard iv.count == 16 else {
-            throw CryptographicError.invalidIVSize
+            throw CryptographicError.invalidIVSize(expected: 16, actual: iv.count)
         }
         let blockSize = Nb * 4
         var plaintext: [UInt8] = []
@@ -164,7 +164,7 @@ public class AESCore {
 
     private func gcmEncrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
         guard iv.count == 12 else {
-            throw CryptographicError.invalidIVSize
+            throw CryptographicError.invalidIVSize(expected: 12, actual: iv.count)
         }
 
         let blockSize = Nb * 4
@@ -205,7 +205,7 @@ public class AESCore {
 
     private func gcmDecrypt(data: [UInt8], iv: [UInt8]) throws -> [UInt8] {
         guard iv.count == 12 else {
-            throw CryptographicError.invalidIVSize
+            throw CryptographicError.invalidIVSize(expected: 12, actual: iv.count)
         }
 
         let blockSize = Nb * 4

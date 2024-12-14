@@ -47,38 +47,71 @@ public class CryptographicServiceImpl: CryptographicService {
             }
         }
     
-    func doNativeEncryption(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data{
-        guard let iv = iv else {
-            throw CryptographicError.mandatoryIV
-        }
+    func doNativeEncryption(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data {
         
-        // Proceed with cryptographic operation (encryption or decryption)
-        var result = [UInt8](repeating: 0, count: data.count + kCCBlockSizeAES128)
-        var resultLength = 0
+        
+        // Select the correct algorithm
+        let cryptoAlgorithm: UInt32
+        let blockSize: Int
+        
+        cryptoAlgorithm = algorithm.ccAlgorithm
+        blockSize = algorithm.ivSize
+        
+        // Prepare a buffer for the result
+        let resultSize = data.count + blockSize
+        var result = [UInt8](repeating: 0, count: resultSize)
+        var resultLength: size_t = 0
+        
+        // Perform the cryptographic operation
+        var status: CCCryptorStatus = -1
 
-        let ivPointer = iv.withUnsafeBytes { $0.baseAddress } ?? nil
-
-        let status = key.withUnsafeBytes { keyPointer in
-            data.withUnsafeBytes { dataPointer in
-                CCCrypt(
-                    CCOperation(operation),
-                    algorithm.ccAlgorithm,
-                    algorithm.ccOptions,
-                    keyPointer.baseAddress, key.count,
-                    ivPointer,
-                    dataPointer.baseAddress, data.count,
-                    &result, result.count,
-                    &resultLength
-                )
+        // Access the data's buffer
+        data.withUnsafeBytes { inputBytes in
+            key.withUnsafeBytes { keyBytes in
+                if let iv = iv {
+                    // If IV exists
+                    iv.withUnsafeBytes { ivBytes in
+                        // Perform the cryptographic operation
+                        result.withUnsafeMutableBytes { resultBytes in
+                            status = CCCrypt(
+                                CCOperation(operation),
+                                cryptoAlgorithm,
+                                CCOptions(kCCOptionPKCS7Padding),
+                                keyBytes.baseAddress, key.count,
+                                ivBytes.baseAddress,
+                                inputBytes.baseAddress, data.count,
+                                resultBytes.baseAddress, resultSize,
+                                &resultLength
+                            )
+                        }
+                    }
+                } else {
+                    // If IV is nil
+                    result.withUnsafeMutableBytes { resultBytes in
+                        status = CCCrypt(
+                            CCOperation(operation),
+                            CCAlgorithm(cryptoAlgorithm),
+                            CCOptions(kCCOptionPKCS7Padding),
+                            keyBytes.baseAddress, key.count,
+                            nil,  // No IV
+                            inputBytes.baseAddress, data.count,
+                            resultBytes.baseAddress, resultSize,
+                            &resultLength
+                        )
+                    }
+                }
             }
         }
 
+        // Check the operation status
         guard status == kCCSuccess else {
             throw CryptographicError.cryptOperationFailed(status: Int(status))
         }
-
+        
+        // Return the result data up to the actual length
         return Data(result.prefix(resultLength))
     }
+
 
     // MARK: - AES encryption/decryption
     private func aesServiceCrypt(data: Data, key: Data, iv: Data?, operation: Int, mode: AESMode) throws -> Data? {
@@ -246,7 +279,5 @@ public class CryptographicServiceImpl: CryptographicService {
         }
         
     }
-
-
 
 }

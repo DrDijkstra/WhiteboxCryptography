@@ -15,27 +15,6 @@ public enum CryptoAlgorithm: Hashable, Equatable {
     case cast(keySize: Int)
     case rc2(keySize: Int)
 
-    // Initialize CryptoAlgorithm with validation
-    public init?(keySize: Int, mode: AESMode? = nil, processingType: AESProcressingType? = nil) throws {
-        switch keySize {
-        case 56: // DES case, fixed key size in bits
-            self = .des(keySize: keySize)
-        case 112, 168: // Triple DES case, fixed key size in bits
-            self = .tripleDES(keySize: keySize)
-        case 40: // CAST case, fixed key size in bits
-            self = .cast(keySize: keySize)
-        case let size where size >= 8 && size <= 1024: // RC2 case, key size in bits
-            self = .rc2(keySize: size)
-        case 128, 192, 256: // AES cases (128, 192, 256 bits)
-            if let mode = mode, let processingType = processingType {
-                self = .aes(keySize: keySize, mode: mode, processingType: processingType)
-            } else {
-                throw CryptographicError.invalidKeySize
-            }
-        default:
-            throw CryptographicError.invalidKeySize
-        }
-    }
     
     // The key size in bits for the algorithm
     public var keySize: Int {
@@ -77,20 +56,31 @@ public enum CryptoAlgorithm: Hashable, Equatable {
     }
 
     // Validate if a key size is valid for the algorithm (in bits)
-    func isValidKeySize(_ keySize: Int) -> Bool {
+    func validateKeySize(_ keySize: Int) throws {
         switch self {
         case .aes:
-            return keySize == 128 || keySize == 192 || keySize == 256 // AES valid key sizes in bits
+            guard keySize == 128 || keySize == 192 || keySize == 256 else {
+                throw CryptographicError.invalidKeySize("AES requires a key size of 128, 192, or 256 bits. Provided: \(keySize)")
+            }
         case .des:
-            return keySize == 56 // DES valid key size in bits
+            guard keySize == 64 else {
+                throw CryptographicError.invalidKeySize("DES requires a key size of 56 bits. Provided: \(keySize)")
+            }
         case .tripleDES:
-            return keySize == 112 || keySize == 168 // Triple DES valid key sizes in bits
+            guard keySize == 192 else {
+                throw CryptographicError.invalidKeySize("Triple DES requires a key size of 112 or 168 bits. Provided: \(keySize)")
+            }
         case .cast:
-            return keySize == 40 // CAST valid key size in bits
+            guard keySize == 40 else {
+                throw CryptographicError.invalidKeySize("CAST requires a key size of 40 bits. Provided: \(keySize)")
+            }
         case .rc2:
-            return keySize >= 8 && keySize <= 1024 // RC2 valid key sizes in bits
+            guard keySize >= 8 && keySize <= 1024 else {
+                throw CryptographicError.invalidKeySize("RC2 requires a key size between 8 and 1024 bits. Provided: \(keySize)")
+            }
         }
     }
+
 
     // Convert CryptoAlgorithm to CommonCrypto CCAlgorithm
     var ccAlgorithm: CCAlgorithm {
@@ -113,7 +103,7 @@ public enum CryptoAlgorithm: Hashable, Equatable {
         }
     }
     
-    var validKeySizes: [CryptoKeySize] {
+    public var validKeySizes: [CryptoKeySize] {
         switch self {
         case .aes(_,let mode,let processingType):
             switch processingType {
@@ -129,9 +119,9 @@ public enum CryptoAlgorithm: Hashable, Equatable {
             }
              // AES valid key sizes in bits
         case .des:
-            return [.specific(56)] // DES valid key size in bits
+            return [.specific(64)] // DES valid key size in bits
         case .tripleDES:
-            return [.specific(112), .specific(168)] // Triple DES valid key sizes in bits
+            return [.specific(192)] // Triple DES valid key sizes in bits
         case .cast:
             return [.specific(40)] // CAST valid key size in bits
         case .rc2:
@@ -169,6 +159,16 @@ public enum CryptoAlgorithm: Hashable, Equatable {
             return lhsKeySize == rhsKeySize
         default:
             return false
+        }
+    }
+    
+    func validateIVSize( iv: Data?) throws {
+        guard let iv = iv else {
+            throw CryptographicError.mandatoryIV
+        }
+
+        if iv.count != self.ivSize {
+            throw CryptographicError.invalidIVSize(expected: self.ivSize, actual: iv.count)
         }
     }
 }
