@@ -26,7 +26,7 @@ class WhiteboxCryptographySDKTests: XCTestCase {
     }
     
     // Helper function to test AES encryption and decryption for a specific mode, key size, and IV size
-    func testAESMode(mode: AESMode, keySize: Int, ivSize: Int, type: AESProcressingType) {
+    func testAESMode(mode: AESMode, keySize: Int, ivSize: Int, type: ProcressingType) {
         let originalData = "Hello, AES \(mode)!".data(using: .utf8)!
         let key = Data(repeating: 0x02, count: keySize / 8)
         let iv = Data(repeating: 0x03, count: ivSize)
@@ -104,7 +104,7 @@ class WhiteboxCryptographySDKTests: XCTestCase {
         let key = Data(repeating: 0x04, count: keySize / 8)
         let iv = Data(repeating: 0x05, count: ivSize)
         
-        let algorithm = CryptoAlgorithm.des(keySize: keySize)
+        let algorithm = CryptoAlgorithm.des(keySize: keySize, processingType: .faster)
         testAlgorithm(originalData: originalData, algorithm: algorithm, key: key, iv: iv)
     }
     
@@ -117,7 +117,7 @@ class WhiteboxCryptographySDKTests: XCTestCase {
         for keySize in keySizes {
             let key = Data(repeating: 0x04, count: keySize / 8)
             let iv = Data(repeating: 0x05, count: ivSize)
-            let algorithm = CryptoAlgorithm.tripleDES(keySize: keySize)
+            let algorithm = CryptoAlgorithm.tripleDES(keySize: keySize, processingType: .faster)
             testAlgorithm(originalData: originalData, algorithm: algorithm, key: key, iv: iv)
         }
     }
@@ -131,7 +131,7 @@ class WhiteboxCryptographySDKTests: XCTestCase {
         for keySize in keySizes {
             let key = Data(repeating: 0x06, count: keySize / 8)
             let iv = Data(repeating: 0x07, count: ivSize)
-            let algorithm = CryptoAlgorithm.rc2(keySize: keySize)
+            let algorithm = CryptoAlgorithm.rc2(keySize: keySize, processingType: .faster)
             testAlgorithm(originalData: originalData, algorithm: algorithm, key: key, iv: iv)
         }
     }
@@ -152,7 +152,7 @@ class WhiteboxCryptographySDKTests: XCTestCase {
     }
     
     func testCASTRegular() {
-        let algorithm = CryptoAlgorithm.cast(keySize: 40)
+        let algorithm = CryptoAlgorithm.cast(keySize: 40, processingType: .faster)
         let keySizes = [40] // Key sizes for RC2
         let ivSize = 8 //
         let originalData = "Hello, CAST!".data(using: .utf8)!
@@ -161,7 +161,6 @@ class WhiteboxCryptographySDKTests: XCTestCase {
         for keySize in keySizes {
             let key = Data(repeating: 0x06, count: keySize / 8)
             let iv = Data(repeating: 0x07, count: ivSize)
-            let algorithm = CryptoAlgorithm.cast(keySize: keySize)
             testAlgorithm(originalData: originalData, algorithm: algorithm, key: key, iv: iv)
         }
     }

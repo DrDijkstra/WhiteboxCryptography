@@ -94,17 +94,62 @@ final class MemoryScramblerTests: XCTestCase {
     }
 
     // Test full scramble and descramble using all techniques for multiple data sizes
-    func testFullScrambleDescrambleForDifferentDataSizes() {
+    func testFullScrambleDescrambleForDifferentDataSizesRegular() {
+        do{
+            let dataSizes: [Int] = [1024, 10 * 1024, 100 * 1024, 1024 * 1024, 10 * 1024 * 1024]
+            
+            for size in dataSizes {
+                let testData = Data(repeating: 0x01, count: size)
+                
+                let scrambledData = try memoryScrambler.scramble(data: testData, withKey: testKey, processingType: .regular)
+                let descrambledData = try memoryScrambler.descramble(data: scrambledData, withKey: testKey, processingType: .regular)
+                
+                // Assert that the original data is returned after descrambling
+                XCTAssertEqual(testData, descrambledData, "Full scramble and descramble should result in the original data for size: \(size)")
+            }
+        }catch{
+            XCTFail("Scrambling failed with error: \(error)")
+
+        }
+    }
+    
+    func testFullScrambleDescrambleForDifferentDataSizesFaster() {
+        do{
+            let dataSizes: [Int] = [1024, 10 * 1024, 100 * 1024, 1024 * 1024, 10 * 1024 * 1024]
+            
+            for size in dataSizes {
+                let testData = Data(repeating: 0x01, count: size)
+                
+                let scrambledData = try memoryScrambler.scramble(data: testData, withKey: testKey, processingType: .faster)
+                let descrambledData = try memoryScrambler.descramble(data: scrambledData, withKey: testKey, processingType: .faster)
+                
+                // Assert that the original data is returned after descrambling
+                XCTAssertEqual(testData, descrambledData, "Full scramble and descramble should result in the original data for size: \(size)")
+            }
+        }catch{
+            XCTFail("Scrambling failed with error: \(error)")
+
+        }
+    }
+
+    // Test double XOR scramble and descramble for multiple data sizes
+    func testDoubleXOR_ScrambleDescrambleForDifferentDataSizes() {
         let dataSizes: [Int] = [1024, 10 * 1024, 100 * 1024, 1024 * 1024, 10 * 1024 * 1024]
         
         for size in dataSizes {
             let testData = Data(repeating: 0x01, count: size)
             
-            let scrambledData = memoryScrambler.scramble(data: testData, withKey: testKey)
-            let descrambledData = memoryScrambler.descramble(data: scrambledData, withKey: testKey)
+            // Apply XOR once
+            let firstScrambledData = memoryScrambler.applyXORScrambling(to: testData, withKey: testKey)
+            // Apply XOR again (double XOR)
+            let doubleScrambledData = memoryScrambler.applyXORScrambling(to: firstScrambledData, withKey: testKey)
             
-            // Assert that the original data is returned after descrambling
-            XCTAssertEqual(testData, descrambledData, "Full scramble and descramble should result in the original data for size: \(size)")
+            // Descramble by applying XOR twice
+            let descrambledData = memoryScrambler.applyXORScrambling(to: doubleScrambledData, withKey: testKey)
+            let finalDescrambledData = memoryScrambler.applyXORScrambling(to: descrambledData, withKey: testKey)
+            
+            // Assert that the original data is returned after double XOR scrambling and descrambling
+            XCTAssertEqual(testData, finalDescrambledData, "Double XOR scrambled and descrambled data should be equal for size: \(size)")
         }
     }
 

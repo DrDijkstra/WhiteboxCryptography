@@ -9,11 +9,11 @@ import Foundation
 import CommonCrypto
 
 public enum CryptoAlgorithm: Hashable, Equatable {
-    case aes(keySize: Int, mode: AESMode, processingType: AESProcressingType)
-    case des(keySize: Int)
-    case tripleDES(keySize: Int)
-    case cast(keySize: Int)
-    case rc2(keySize: Int)
+    case aes(keySize: Int, mode: AESMode, processingType: ProcressingType)
+    case des(keySize: Int, processingType: ProcressingType)
+    case tripleDES(keySize: Int, processingType: ProcressingType)
+    case cast(keySize: Int, processingType: ProcressingType)
+    case rc2(keySize: Int, processingType: ProcressingType)
 
     
     // The key size in bits for the algorithm
@@ -21,14 +21,29 @@ public enum CryptoAlgorithm: Hashable, Equatable {
         switch self {
         case .aes(let size, _, _):
             return size
-        case .des(let size):
+        case .des(let size, _):
             return size
-        case .tripleDES(let size):
+        case .tripleDES(let size, _):
             return size
-        case .cast(let size):
+        case .cast(let size, _):
             return size
-        case .rc2(let size):
+        case .rc2(let size, _):
             return size
+        }
+    }
+    
+    public var processingType: ProcressingType {
+        switch self {
+        case .aes(_, _, let processingType):
+            return processingType
+        case .des(_, let processingType):
+            return processingType
+        case .tripleDES(_, let processingType):
+            return processingType
+        case .cast(_, let processingType):
+            return processingType
+        case .rc2(_, let processingType):
+            return processingType
         }
     }
 
@@ -149,14 +164,14 @@ public enum CryptoAlgorithm: Hashable, Equatable {
         switch (lhs, rhs) {
         case (.aes(let lhsKeySize, let lhsMode, let lhsProcessingType), .aes(let rhsKeySize, let rhsMode, let rhsProcessingType)):
             return lhsKeySize == rhsKeySize && lhsMode == rhsMode && lhsProcessingType == rhsProcessingType
-        case (.des(let lhsKeySize), .des(let rhsKeySize)):
-            return lhsKeySize == rhsKeySize
-        case (.tripleDES(let lhsKeySize), .tripleDES(let rhsKeySize)):
-            return lhsKeySize == rhsKeySize
-        case (.cast(let lhsKeySize), .cast(let rhsKeySize)):
-            return lhsKeySize == rhsKeySize
-        case (.rc2(let lhsKeySize), .rc2(let rhsKeySize)):
-            return lhsKeySize == rhsKeySize
+        case (.des(let lhsKeySize, let lhsProcessingType), .des(let rhsKeySize, let rhsProcessingType)):
+            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
+        case (.tripleDES(let lhsKeySize, let lhsProcessingType), .tripleDES(let rhsKeySize, let rhsProcessingType)):
+            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
+        case (.cast(let lhsKeySize, let lhsProcessingType), .cast(let rhsKeySize, let rhsProcessingType)):
+            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
+        case (.rc2(let lhsKeySize, let lhsProcessingType), .rc2(let rhsKeySize, let rhsProcessingType)):
+            return lhsKeySize == rhsKeySize && lhsProcessingType == rhsProcessingType
         default:
             return false
         }

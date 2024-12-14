@@ -10,7 +10,7 @@ public enum AESMode: Hashable {
     case ecb, cbc, gcm
 }
 
-public enum AESProcressingType:Hashable {
+public enum ProcressingType:Hashable {
     case faster
     case regular
 }

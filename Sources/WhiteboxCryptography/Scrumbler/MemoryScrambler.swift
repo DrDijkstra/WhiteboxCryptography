@@ -8,6 +8,6 @@
 import Foundation
 
 public protocol MemoryScrambler {
-    func scramble(data: Data, withKey key: Data) -> Data
-    func descramble(data: Data, withKey key: Data) -> Data
+    func scramble(data: Data, withKey key: Data, processingType: ProcressingType) throws -> Data
+    func descramble(data: Data, withKey key: Data, processingType: ProcressingType) throws -> Data
 }

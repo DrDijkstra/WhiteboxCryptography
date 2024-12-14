@@ -61,7 +61,8 @@ class CryptographicServiceTests: XCTestCase {
         let iv = Data(repeating: 0x01, count: 8) // DES IV size 8 bytes
 
         let algorithms: [CryptoAlgorithm] = [
-            .des(keySize: 56)
+            .des(keySize: 56, processingType: .faster),
+            .des(keySize: 56, processingType: .regular)
         ]
 
         for algorithm in algorithms {
@@ -86,8 +87,10 @@ class CryptographicServiceTests: XCTestCase {
         let iv = Data(repeating: 0x01, count: 8) // 8-byte IV for Triple DES
 
         let algorithms: [CryptoAlgorithm] = [
-            .tripleDES(keySize: 112),
-            .tripleDES(keySize: 168)
+            .tripleDES(keySize: 112, processingType: .faster),
+            .tripleDES(keySize: 168, processingType: .faster),
+            .tripleDES(keySize: 168, processingType: .regular),
+            .tripleDES(keySize: 168, processingType: .regular),
         ]
 
         for algorithm in algorithms {
@@ -112,7 +115,8 @@ class CryptographicServiceTests: XCTestCase {
         let iv = Data(repeating: 0x01, count: 8) // 8-byte IV for CAST
 
         let algorithms: [CryptoAlgorithm] = [
-            .cast(keySize: 40)
+            .cast(keySize: 40, processingType: .faster),
+            .cast(keySize: 40, processingType: .regular)
         ]
 
         for algorithm in algorithms {
@@ -137,9 +141,12 @@ class CryptographicServiceTests: XCTestCase {
         let iv = Data(repeating: 0x01, count: 8) // 8-byte IV for RC2
 
         let algorithms: [CryptoAlgorithm] = [
-            .rc2(keySize: 64),
-            .rc2(keySize: 128),
-            .rc2(keySize: 256)
+            .rc2(keySize: 64, processingType: .faster),
+            .rc2(keySize: 128, processingType: .faster),
+            .rc2(keySize: 256, processingType: .faster),
+            .rc2(keySize: 64, processingType: .regular),
+            .rc2(keySize: 128, processingType: .regular),
+            .rc2(keySize: 256, processingType: .regular)
         ]
 
         for algorithm in algorithms {

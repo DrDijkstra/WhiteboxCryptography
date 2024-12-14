@@ -24,7 +24,7 @@ public class WhiteboxCryptographySDK {
     public func encrypt(data: Data, withKey key: Data, iv: Data?, algorithm: CryptoAlgorithm) throws -> Data? {
         try algorithm.validateKeySize(key.count * 8)
         try algorithm.validateIVSize(iv: iv)
-        let scrambledData = memoryScrambler.scramble(data: data, withKey: memoryKey)
+        let scrambledData = try memoryScrambler.scramble(data: data, withKey: memoryKey, processingType: algorithm.processingType)
         return try cryptographicService.encrypt(data: scrambledData, withKey: key, iv: iv, algorithm: algorithm)
     }
     
@@ -33,9 +33,9 @@ public class WhiteboxCryptographySDK {
         try algorithm.validateKeySize(key.count * 8)
         try algorithm.validateIVSize(iv: iv)
         guard let decryptedData = try cryptographicService.decrypt(data: data, withKey: key, iv: iv, algorithm: algorithm) else {
-            return nil
+            throw CryptographicError.decryptionError
         }
-        return memoryScrambler.descramble(data: decryptedData, withKey: memoryKey)
+        return try memoryScrambler.descramble(data: decryptedData, withKey: memoryKey, processingType: algorithm.processingType)
     }
     
     // MARK: - IV Generation

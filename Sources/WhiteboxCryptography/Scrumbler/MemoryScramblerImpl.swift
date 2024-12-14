@@ -21,14 +21,24 @@ public class MemoryScramblerImpl: MemoryScrambler {
     ///   - data: The data to be scrambled.
     ///   - key: The key used for scrambling.
     /// - Returns: The scrambled data.
-    public func scramble(data: Data, withKey key: Data) -> Data {
-        var scrambledData = applyXORScrambling(to: data, withKey: key)
-        scrambledData = applyByteShiftScrambling(to: scrambledData, by: 3)
-        if let aesScrambled = applyAESScrambling(to: scrambledData, withKey: key) {
-            scrambledData = aesScrambled
+    public func scramble(data: Data, withKey key: Data, processingType: ProcressingType) throws -> Data {
+        switch processingType {
+        case .faster:
+            guard let aesScrambled = applyAESScrambling(to: data, withKey: key) else{
+                throw CryptographicError.scrambledError
+            }
+            return aesScrambled
+            
+        case .regular:
+            var scrambledData = applyXORScrambling(to: data, withKey: key)
+            scrambledData = applyByteShiftScrambling(to: scrambledData, by: 3)
+            if let aesScrambled = applyAESScrambling(to: scrambledData, withKey: key) {
+                scrambledData = aesScrambled
+            }
+            scrambledData = applyMultiThreadedXORScrambling(to: scrambledData, withKey: key)
+            return scrambledData
         }
-        scrambledData = applyMultiThreadedXORScrambling(to: scrambledData, withKey: key)
-        return scrambledData
+        
     }
 
     /// Descrambles the provided data using the reverse of the scrambling techniques.
@@ -37,16 +47,25 @@ public class MemoryScramblerImpl: MemoryScrambler {
     ///   - data: The data to be descrambled.
     ///   - key: The key used for descrambling.
     /// - Returns: The descrambled data.
-    public func descramble(data: Data, withKey key: Data) -> Data {
-        var descrambledData = applyMultiThreadedXORScrambling(to: data, withKey: key)
+    public func descramble(data: Data, withKey key: Data, processingType: ProcressingType)throws -> Data {
+        switch processingType {
+        case .faster:
+            guard let aesDescrambled = reverseAESScrambling(from: data, withKey: key) else {
+                throw CryptographicError.descrambledError
+            }
+            return aesDescrambled
+        case .regular:
+            var descrambledData = applyMultiThreadedXORScrambling(to: data, withKey: key)
 
-        if let aesDescrambled = reverseAESScrambling(from: descrambledData, withKey: key) {
-            descrambledData = aesDescrambled
+            if let aesDescrambled = reverseAESScrambling(from: descrambledData, withKey: key) {
+                descrambledData = aesDescrambled
+            }
+
+            descrambledData = applyByteShiftScrambling(to: descrambledData, by: -3)
+            descrambledData = applyXORScrambling(to: descrambledData, withKey: key)
+            return descrambledData
         }
-
-        descrambledData = applyByteShiftScrambling(to: descrambledData, by: -3)
-        descrambledData = applyXORScrambling(to: descrambledData, withKey: key)
-        return descrambledData
+        
     }
 
     // MARK: - Scrambling Techniques
