@@ -17,7 +17,7 @@ jobs:
       # Set up Xcode environment
       - name: Set Xcode Version
         run: |
-          sudo xcode-select -switch /Applications/Xcode_15.0.app
+          sudo xcode-select -switch /Applications/Xcode_15.3.app
 
       # Publish to CocoaPods
       - name: Publish to CocoaPods
