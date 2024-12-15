@@ -2,8 +2,6 @@ name: CI
 
 on:
   push:
-    branches:
-      - develop
     tags:
       - "*"
 
@@ -14,6 +12,11 @@ jobs:
     steps:
       # Checkout the repository
       - uses: actions/checkout@v2
+      
+      - name: Set up Xcode 15.0
+      uses: apple-actions/setup-xcode@v2
+      with:
+        xcode-version: '15.0'
 
       # Publish to CocoaPods
       - name: Publish to CocoaPods

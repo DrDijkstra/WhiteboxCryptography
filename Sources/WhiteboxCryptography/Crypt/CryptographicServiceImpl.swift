@@ -21,14 +21,20 @@ public class CryptographicServiceImpl: CryptographicService {
     // MARK: - Cryptographic operation (encryption or decryption)
     private func crypt(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data? {
             switch algorithm {
-            case .aes(_, let mode, let processingType):
+            case .aes(let keysize, let mode, let processingType):
                 switch processingType {
                 case .faster:
                     switch mode {
                     case .cbc:
                         return try doNativeEncryption(data: data, key: key, iv: iv, operation: operation, algorithm: algorithm)
                     case .gcm:
-                        return gcmEncryptDecrypt(data: data, key: key, iv: iv, operation: operation)
+                        switch  AESKeySize(rawValue: keysize / 8) {
+                        case .bits256:
+                            return gcmEncryptDecrypt(data: data, key: key, iv: iv, operation: operation)
+                        default:
+                            throw CryptographicError.fasterGCMisNotAvailableForKeySize192And128
+                        }
+                       
                     case .ecb:
                         throw CryptographicError.ecbNotAvailableInFasterProcessingType
                     }
@@ -41,38 +47,71 @@ public class CryptographicServiceImpl: CryptographicService {
             }
         }
     
-    func doNativeEncryption(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data{
-        guard let iv = iv else {
-            throw CryptographicError.mandatoryIV
-        }
+    func doNativeEncryption(data: Data, key: Data, iv: Data?, operation: Int, algorithm: CryptoAlgorithm) throws -> Data {
         
-        // Proceed with cryptographic operation (encryption or decryption)
-        var result = [UInt8](repeating: 0, count: data.count + kCCBlockSizeAES128)
-        var resultLength = 0
+        
+        // Select the correct algorithm
+        let cryptoAlgorithm: UInt32
+        let blockSize: Int
+        
+        cryptoAlgorithm = algorithm.ccAlgorithm
+        blockSize = algorithm.ivSize
+        
+        // Prepare a buffer for the result
+        let resultSize = data.count + blockSize
+        var result = [UInt8](repeating: 0, count: resultSize)
+        var resultLength: size_t = 0
+        
+        // Perform the cryptographic operation
+        var status: CCCryptorStatus = -1
 
-        let ivPointer = iv.withUnsafeBytes { $0.baseAddress } ?? nil
-
-        let status = key.withUnsafeBytes { keyPointer in
-            data.withUnsafeBytes { dataPointer in
-                CCCrypt(
-                    CCOperation(operation),
-                    algorithm.ccAlgorithm,
-                    algorithm.ccOptions,
-                    keyPointer.baseAddress, key.count,
-                    ivPointer,
-                    dataPointer.baseAddress, data.count,
-                    &result, result.count,
-                    &resultLength
-                )
+        // Access the data's buffer
+        data.withUnsafeBytes { inputBytes in
+            key.withUnsafeBytes { keyBytes in
+                if let iv = iv {
+                    // If IV exists
+                    iv.withUnsafeBytes { ivBytes in
+                        // Perform the cryptographic operation
+                        result.withUnsafeMutableBytes { resultBytes in
+                            status = CCCrypt(
+                                CCOperation(operation),
+                                cryptoAlgorithm,
+                                CCOptions(kCCOptionPKCS7Padding),
+                                keyBytes.baseAddress, key.count,
+                                ivBytes.baseAddress,
+                                inputBytes.baseAddress, data.count,
+                                resultBytes.baseAddress, resultSize,
+                                &resultLength
+                            )
+                        }
+                    }
+                } else {
+                    // If IV is nil
+                    result.withUnsafeMutableBytes { resultBytes in
+                        status = CCCrypt(
+                            CCOperation(operation),
+                            CCAlgorithm(cryptoAlgorithm),
+                            CCOptions(kCCOptionPKCS7Padding),
+                            keyBytes.baseAddress, key.count,
+                            nil,  // No IV
+                            inputBytes.baseAddress, data.count,
+                            resultBytes.baseAddress, resultSize,
+                            &resultLength
+                        )
+                    }
+                }
             }
         }
 
+        // Check the operation status
         guard status == kCCSuccess else {
             throw CryptographicError.cryptOperationFailed(status: Int(status))
         }
-
+        
+        // Return the result data up to the actual length
         return Data(result.prefix(resultLength))
     }
+
 
     // MARK: - AES encryption/decryption
     private func aesServiceCrypt(data: Data, key: Data, iv: Data?, operation: Int, mode: AESMode) throws -> Data? {
@@ -98,22 +137,25 @@ public class CryptographicServiceImpl: CryptographicService {
 
     // MARK: - Generate Random Key for Specified Algorithm
     public func generateRandomKey(forAlgorithm algorithm: CryptoAlgorithm) -> Data? {
-        let keyLength: Int
+        var keySizeInBits: Int?
 
-        switch algorithm {
-        case .aes(let keySize, _, _):
-            keyLength = aesKeyLength(for: keySize)
-        case .des:
-            keyLength = 8
-        case .tripleDES:
-            keyLength = 24
-        case .rc2:
-            keyLength = 16
-        case .cast:
-            keyLength = 16
+        for validSize in algorithm.validKeySizes {
+            if case .specific(let keySize) = validSize {
+                keySizeInBits = keySize
+                break
+            } else if case .range(let min, let max) = validSize {
+                keySizeInBits = Int.random(in: min...max)
+                break
+            }
         }
 
-        return generateRandomData(ofLength: keyLength)
+        guard let keySize = keySizeInBits else {
+            return nil
+        }
+
+        let keySizeInBytes = keySize / 8
+
+        return generateRandomData(ofLength: keySizeInBytes)
     }
 
     // MARK: - Generate Random IV
@@ -127,18 +169,6 @@ public class CryptographicServiceImpl: CryptographicService {
             SecRandomCopyBytes(kSecRandomDefault, length, bytes.baseAddress!)
         }
         return result == errSecSuccess ? data : nil
-    }
-
-    // MARK: - AES Key Length Calculation
-    private func aesKeyLength(for size: AESKeySize) -> Int {
-        switch size {
-        case .bits128:
-            return kCCKeySizeAES128
-        case .bits192:
-            return kCCKeySizeAES192
-        case .bits256:
-            return kCCKeySizeAES256
-        }
     }
 
     // MARK: - Key Derivation using PBKDF2
@@ -249,7 +279,5 @@ public class CryptographicServiceImpl: CryptographicService {
         }
         
     }
-
-
 
 }

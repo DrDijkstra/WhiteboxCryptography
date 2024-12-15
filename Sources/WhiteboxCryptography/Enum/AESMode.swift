@@ -6,11 +6,11 @@
 //
 
 
-public enum AESMode: Hashable {
+public enum AESMode: String, Hashable {
     case ecb, cbc, gcm
 }
 
-public enum AESProcressingType:Hashable {
+public enum ProcressingType:String, Hashable {
     case faster
     case regular
 }
