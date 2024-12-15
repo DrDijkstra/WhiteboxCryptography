@@ -69,7 +69,7 @@ import WhiteboxCryptography
 
 ### Notes:
 - Ensure the framework is properly integrated into your project according to the package manager's setup instructions.
-- Double-check the capitalization of `WhiteBoxCryptography` and `WhiteboxCryptographySDK` as some environments may be case-sensitive.
+- Double-check the capitalization of `WhiteboxCryptography` and `WhiteboxCryptographySDK` as some environments may be case-sensitive.
 
 ### Example Usage of `WhiteboxCryptographySDK`
 
@@ -77,6 +77,7 @@ import WhiteboxCryptography
 // Example of how to use the encryption and decryption functionalities
 
 import Foundation
+import WhiteboxCryptography
 
 // Initialize the WhiteboxCryptographySDK with a memory key
 let memoryKey = "your-memory-key".data(using: .utf8)!
