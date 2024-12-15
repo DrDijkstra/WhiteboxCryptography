@@ -11,23 +11,32 @@ jobs:
 
     steps:
       # Checkout the repository
-      - uses: actions/checkout@v2
-      
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Set up Xcode environment
       - name: Set up Xcode 15.0
-      uses: apple-actions/setup-xcode@v2
-      with:
-        xcode-version: '15.0'
+        uses: apple-actions/setup-xcode@v2
+        with:
+          xcode-version: '15.0'
 
       # Publish to CocoaPods
       - name: Publish to CocoaPods
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: |
-          pod trunk push WhiteboxCryptography.podspec --verbose --allow-warnings
+          if [ -f "WhiteboxCryptography.podspec" ]; then
+            pod trunk push WhiteboxCryptography.podspec --verbose --allow-warnings
+          else
+            echo "Error: WhiteboxCryptography.podspec not found!" && exit 1
+          fi
 
-      # Upload to Carthage
+      # Install Carthage
+      - name: Install Carthage
+        run: |
+          brew install carthage || true
+
+      # Build and archive with Carthage
       - name: Upload to Carthage
         run: |
           carthage build --use-xcframeworks --archive
-
-      # Add more steps as necessary for tests or other tasks
