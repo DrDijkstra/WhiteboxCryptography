@@ -10,6 +10,7 @@
 		6A0B39AD2D0CBFBD000C6533 /* WhiteboxCryptography in Frameworks */ = {isa = PBXBuildFile; productRef = 6A0B39AC2D0CBFBD000C6533 /* WhiteboxCryptography */; };
 		6A7DEEA22D0D0EAB00CA70F6 /* WhiteboxCryptography in Frameworks */ = {isa = PBXBuildFile; productRef = 6A7DEEA12D0D0EAB00CA70F6 /* WhiteboxCryptography */; };
 		6AFE10BA2D0E39FB001D9AD6 /* WhiteboxCryptography in Frameworks */ = {isa = PBXBuildFile; productRef = 6AFE10B92D0E39FB001D9AD6 /* WhiteboxCryptography */; };
+		6AFE10D12D0E57CE001D9AD6 /* WhiteboxCryptography in Frameworks */ = {isa = PBXBuildFile; productRef = 6AFE10D02D0E57CE001D9AD6 /* WhiteboxCryptography */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 			files = (
 				6A7DEEA22D0D0EAB00CA70F6 /* WhiteboxCryptography in Frameworks */,
 				6A0B39AD2D0CBFBD000C6533 /* WhiteboxCryptography in Frameworks */,
+				6AFE10D12D0E57CE001D9AD6 /* WhiteboxCryptography in Frameworks */,
 				6AFE10BA2D0E39FB001D9AD6 /* WhiteboxCryptography in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -188,7 +190,7 @@
 			mainGroup = 6A5BC46C2D08B85B0058551F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				6AFE10B82D0E39FB001D9AD6 /* XCLocalSwiftPackageReference "../WhiteboxCryptography" */,
+				6AFE10CF2D0E57CE001D9AD6 /* XCLocalSwiftPackageReference "../../WhiteboxCryptography" */,
 			);
 			productRefGroup = 6A5BC4762D08B85B0058551F /* Products */;
 			projectDirPath = "";
@@ -587,9 +589,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		6AFE10B82D0E39FB001D9AD6 /* XCLocalSwiftPackageReference "../WhiteboxCryptography" */ = {
+		6AFE10CF2D0E57CE001D9AD6 /* XCLocalSwiftPackageReference "../../WhiteboxCryptography" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../WhiteboxCryptography;
+			relativePath = ../../WhiteboxCryptography;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -615,6 +617,10 @@
 			productName = WhiteboxCryptography;
 		};
 		6AFE10B92D0E39FB001D9AD6 /* WhiteboxCryptography */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WhiteboxCryptography;
+		};
+		6AFE10D02D0E57CE001D9AD6 /* WhiteboxCryptography */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WhiteboxCryptography;
 		};
