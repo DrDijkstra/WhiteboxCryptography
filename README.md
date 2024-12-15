@@ -62,7 +62,7 @@ To use the White Box Cryptography framework in your project, follow the appropri
 Simply import the framework into your Swift files:
 
 ```swift
-import WhiteBoxCryptography
+import WhiteboxCryptography
 ```
 
 ---
