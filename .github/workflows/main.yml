@@ -29,13 +29,3 @@ jobs:
           else
             echo "Error: WhiteboxCryptography.podspec not found!" && exit 1
           fi
-
-      # Install Carthage
-      - name: Install Carthage
-        run: |
-          brew install carthage || true
-
-      # Build and archive with Carthage
-      - name: Build and Archive with Carthage
-        run: |
-          carthage build --use-xcframeworks --archive
