@@ -5,7 +5,7 @@
 
 [![Swift](https://img.shields.io/badge/Swift-5.9_5.10_6.0-orange?style=flat-square)](https://img.shields.io/badge/Swift-5.9_5.10_6.0-Orange?style=flat-square)
 [![Platforms](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS-yellowgreen?style=flat-square)](https://img.shields.io/badge/Platforms-macOS_iOS_tvOS_watchOS_visionOS-Green?style=flat-square)
-[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/WhiteboxCryptographySDK.svg?style=flat-square)](https://img.shields.io/cocoapods/v/WhiteboxCryptographySDK.svg)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/WhiteboxCryptography.svg?style=flat-square)](https://img.shields.io/cocoapods/v/WhiteboxCryptography.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat-square)](https://github.com/Carthage/Carthage)
 [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
 
@@ -36,7 +36,7 @@ To integrate the White Box Cryptography framework into your Xcode project using 
 1. Add the following to your `Podfile`:
 
 ```ruby
- pod 'WhiteboxCryptographySDK', '~> 1.0'
+ pod 'WhiteboxCryptography', '~> 1.0'
 ```
 
 2. Run `pod install` in the terminal.
@@ -48,7 +48,7 @@ To integrate the White Box Cryptography framework into your Xcode project using 
 To integrate White Box Cryptography with Carthage, add the following to your `Cartfile`:
 
 ```
-github "DrDijkstra/WhiteboxCryptography" ~> 1.0.1
+github "DrDijkstra/WhiteboxCryptography"
 ```
 
 Then run `carthage update` to build the framework.
@@ -57,20 +57,12 @@ Then run `carthage update` to build the framework.
 
 To use the White Box Cryptography framework in your project, follow the appropriate instructions based on your package manager:
 
-### For Swift Package Manager (SPM)
+
 
 Simply import the framework into your Swift files:
 
 ```swift
 import WhiteBoxCryptography
-```
-
-### For Carthage or CocoaPods
-
-Import the framework using the following:
-
-```swift
-import WhiteboxCryptographySDK
 ```
 
 ---
@@ -96,21 +88,26 @@ let data = "Sensitive data".data(using: .utf8)!
 // Define a cryptographic key and IV
 let encryptionKey = "your-encryption-key".data(using: .utf8)!
 let iv = "your-iv-string".data(using: .utf8) // Optional IV for block ciphers
-let algorithm: CryptoAlgorithm = .aes // Replace with the actual algorithm
+let algorithm: CryptoAlgorithm = .aes(keySize: 256, mode: .ecb, processingType: .regular) // Replace with the actual algorithm
 
 // Encrypt the data
-if let encryptedData = whiteboxSDK.encrypt(data: data, withKey: encryptionKey, iv: iv, algorithm: algorithm) {
-    print("Encrypted Data: \(encryptedData.base64EncodedString())")
+do {
+        if let encryptedData = try whiteboxSDK.encrypt(data: data, withKey: encryptionKey, iv: iv, algorithm: algorithm) {
+            print("Encrypted Data: \(encryptedData.base64EncodedString())")
+            
+            // Decrypt the data
+            if let decryptedData = try whiteboxSDK.decrypt(data: encryptedData, withKey: encryptionKey, iv: iv, algorithm: algorithm) {
+                let decryptedString = String(data: decryptedData, encoding: .utf8)
+                print("Decrypted String: \(decryptedString ?? "Failed to decrypt")")
+            } else {
+                print("Decryption failed")
+            }
+        } else {
+            print("Encryption failed")
+        }
+    }catch(let error){
     
-    // Decrypt the data
-    if let decryptedData = whiteboxSDK.decrypt(data: encryptedData, withKey: encryptionKey, iv: iv, algorithm: algorithm) {
-        let decryptedString = String(data: decryptedData, encoding: .utf8)
-        print("Decrypted String: \(decryptedString ?? "Failed to decrypt")")
-    } else {
-        print("Decryption failed")
     }
-} else {
-    print("Encryption failed")
 }
 ```
 ---
