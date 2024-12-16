@@ -188,8 +188,12 @@ class ContentViewModel: ObservableObject {
     func updateProcessingType(processingType: ProcressingType) {
         self.aesProcessingType = processingType
         switch selectedAlgorithm {
-        case .aes:
-            selectedAlgorithm = .aes(keySize: selectedAlgorithm.keySize, mode: selectedAlgorithm.aesMode!, processingType: processingType)
+        case .aes(_,let mode, let pType):
+            if mode == .gcm && processingType == .faster {
+                selectedAlgorithm = .aes(keySize: 256, mode: selectedAlgorithm.aesMode!, processingType: processingType)
+            }else{
+                selectedAlgorithm = .aes(keySize: selectedAlgorithm.keySize, mode: selectedAlgorithm.aesMode!, processingType: processingType)
+            }
         case .des:
             selectedAlgorithm = .des(keySize: selectedAlgorithm.keySize, processingType: processingType)
         case .tripleDES:
